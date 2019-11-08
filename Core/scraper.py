@@ -33,15 +33,9 @@ class Scraper:
                     raise Exception("No css selectors were provided: ")
                 if (all(x is not None for x in [id_name, class_name])):
                     warnings.warn('Both css id and class was provided. class will be ignored')                 
-                links = BeautifulSoup(resp.text,'html.parser', parse_only=soup_object)
+                links = BeautifulSoup(resp.content,'html.parser', parse_only=soup_object)
         except Exception as e:
             logger.exception(e)
             print(e)
         finally:
             return links
-
-s = Scraper('http://banglaclassicbooks.blogspot.com/')
-#s.get_links()
-s.send_request()
-'''s2 = Scraper('https://banglaclassicbooks.blogspot.com/')
-s2.send_request()'''
