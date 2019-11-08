@@ -9,10 +9,10 @@ class ScrapeMethodTests(unittest.TestCase):
     def setUpClass(cls):
         cls.scraper = Scraper(get_site_description()[0])
 
-    @data(('BlogArchive1_ArchiveList','posts'), ('BlogArchive1_ArchiveList', None),(None,'posts'),('','posts'),('BlogArchive1_ArchiveList',''))
+    @data((None,None),('BlogArchive1_ArchiveList','posts'), ('BlogArchive1_ArchiveList', None),(None,'posts'),('','posts'),('BlogArchive1_ArchiveList',''))
     @unpack
     def test_get_links(self, i, c):
-        assert self.scraper.get_links(id_name=i,class_name=c) is not Exception
+        self.assertNotIsInstance(self.scraper.get_links(id_name=i,class_name=c),Exception)
 
     def test_send_request(self):
         assert self.scraper.send_request().status_code is 200
