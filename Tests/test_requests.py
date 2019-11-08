@@ -1,15 +1,21 @@
 import unittest
+from ddt import ddt, data, unpack
 from Core.scraper import Scraper
 from Configuration.config import get_site_description
 import logging, json
+@ddt
+class ScrapeMethodTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.scraper = Scraper(get_site_description()[0])
 
-class ResponseTests(unittest.TestCase):
-    def setUp(self):
-        #logger = logging.getLogger('TestLog')
-        self.scraper = Scraper('http://bengalitreasuretrove.blogspot.com/')
-        site_description = get_site_description()
-        print(site_description)    
-    def test_get_links(self):
-        assert self.scraper.get_links(id_name='BlogArchive1_ArchiveList',class_name='posts') is not None
+    @data(('BlogArchive1_ArchiveList','posts'), ('BlogArchive1_ArchiveList', None),(None,'posts'),('','posts'),('BlogArchive1_ArchiveList',''))
+    @unpack
+    def test_get_links(self, i, c):
+        assert self.scraper.get_links(id_name=i,class_name=c) is not Exception
+
     def test_send_request(self):
         assert self.scraper.send_request().status_code is 200
+
+    def test_download_book(self):
+        assert self.scraper.download_file is not None

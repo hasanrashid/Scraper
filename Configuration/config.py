@@ -13,9 +13,8 @@ logger = logging.getLogger(config_ini_settings['Logging']['main-logger'])
 def get_site_description():
     site_description=None
     try:           
-        with open("./site-descriptor.json", "r") as s:
-            site_description = json.loads(s)
-            print(site_description)
+        with open("./Configuration/site-descriptor.json", "r") as s:
+            site_description = json.load(s)
     except Exception as e:
         logger.error(e)
         print(e)

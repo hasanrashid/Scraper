@@ -1,11 +1,21 @@
-{
-    "http://banglaclassicbooks.blogspot.com/":{
-        "anchor-container-class":"post-body entry-content",
-        "anchor-container-type":"div",
-        "anchor":{
+[{
+    "url":"http://banglaclassicbooks.blogspot.com/",
+    "description":{
+        "navigation-link":{
+            "id":"blog-pager-older-link",
+            "class":"",
+            "type":"a"                        
+        },
+        "page":{
+            "id":"",
+            "class":"post-body entry-content",
+            "type":"div"
+        },
+        "book":{
             "id":"",
             "class":"",
+            "type":"a",
             "text-regex":"ডাউনলোড"
         }
     }
-}
+}]

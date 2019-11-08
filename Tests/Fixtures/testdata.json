@@ -1,7 +1,7 @@
 {
-    "https://banglaclassicbooks.blogspot.com/":
+    "get_links":
     {
-        "id":"",
-        "class":""
+        "id":"BlogArchive1_ArchiveList",
+        "class":"posts"
     }
 }
