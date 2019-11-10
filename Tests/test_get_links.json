@@ -1,0 +1,28 @@
+{
+    "both_none":{
+        "id_name":"None",
+        "class_name":"None"
+    },
+    "both_has_value":{
+        "id_name":"post-body-9192865501445967797",
+        "class_name":"post-body entry-content"
+    },
+    "class_none":{
+        "id_name":"post-body-9192865501445967797",
+        "class_name":"None"    
+    },
+    "id_none":{
+        "id_name":"None",
+        "class_name":"post-body entry-content"
+    },
+    "id_empty":{
+        "id_name":"",
+        "class_name":"post-body entry-content"
+    },
+    "class_empty":{
+        "id_name":"post-body-9192865501445967797",
+        "class_name":""
+    }
+
+
+}

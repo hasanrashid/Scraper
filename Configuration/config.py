@@ -1,6 +1,6 @@
 import configparser, logging, datetime, json
 
-config_ini_settings = configparser.ConfigParser()
+config_ini_settings = configparser.RawConfigParser()
 config_ini_settings.read("./Configuration/config.ini")
 
 logging.basicConfig(level=config_ini_settings['Logging']['level'],
