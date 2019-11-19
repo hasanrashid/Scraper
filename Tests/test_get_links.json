@@ -1,18 +1,14 @@
 {
     "both_none":{
-        "id_name":"None",
-        "class_name":"None"
     },
     "both_has_value":{
         "id_name":"post-body-9192865501445967797",
         "class_name":"post-body entry-content"
     },
     "class_none":{
-        "id_name":"post-body-9192865501445967797",
-        "class_name":"None"    
+        "id_name":"post-body-9192865501445967797"
     },
     "id_none":{
-        "id_name":"None",
         "class_name":"post-body entry-content"
     },
     "id_empty":{
@@ -22,7 +18,41 @@
     "class_empty":{
         "id_name":"post-body-9192865501445967797",
         "class_name":""
+    },
+    "element_type_div":{
+        "class_name":"post-body entry-content",
+        "element_type":"div"
+    },
+    "element_type_a":{
+        "class_name":"post-body entry-content",
+        "element_type":"a"
+    },
+    "element_none":{
+        "class_name":"post-body entry-content"
+    },
+    "css_selector":{
+        "css_selector":"div > a"
+    },
+    "element_attribute":{
+        "element_attribute":{
+            "attribute": "href",
+            "regex":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly"
+        }
+    },    
+    "element_type_anchor_and_attribute":{
+        "element_type":"a",
+        "element_attribute":{
+            "attribute": "href",
+            "regex":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly"
+        }
+    },    
+    "css_selector_a_with_attribute":{
+        "class_name":"post-body entry-content",
+        "css_selector":"div > a",
+        "element_attribute":{
+            "attribute": "href",
+            "regex":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly"
+        }
     }
-
 
 }

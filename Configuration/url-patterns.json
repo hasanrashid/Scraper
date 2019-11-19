@@ -1,0 +1,15 @@
+{
+    "RegEx":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly",
+    "Download RegEx":{
+        "mediafire":"https://www.mediafire.com/file/",
+        "https://drive.google.com/file/":"(?:id=|d\/)([a-zA-Z-0-9]*)",
+        "https://drive.google.com/open?":"(?:id=|\/d\/)(.*(\/)|.*)",
+        "datafilehost":"http://www.datafilehost.com/get.php",
+        "goo.gl":"http://goo.gl",
+        "bit.ly":"http://bit.ly"
+    },
+    "Download Site":{
+        "https://drive.google.com/file/":"https://drive.google.com/uc?export=download&confirm=no_antivirus&id=",
+        "https://drive.google.com/open?":"https://drive.google.com/uc?export=download&confirm=no_antivirus&id="
+    }   
+}

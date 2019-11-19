@@ -1,7 +1,9 @@
 import configparser, logging, datetime, json
 
-config_ini_settings = configparser.RawConfigParser()
+config_ini_settings = configparser.SafeConfigParser()
 config_ini_settings.read("./Configuration/config.ini")
+with open("./Configuration/url-patterns.json", "r") as s:
+    url_patterns = json.load(s)
 
 logging.basicConfig(level=config_ini_settings['Logging']['level'],
    format=config_ini_settings['Logging']['formatter'],
@@ -9,14 +11,3 @@ logging.basicConfig(level=config_ini_settings['Logging']['level'],
    filename=config_ini_settings['Logging']['main-log']+' '+datetime.datetime.now().strftime('%Y-%m-%d')+'.log',
    filemode='w')
 logger = logging.getLogger(config_ini_settings['Logging']['main-logger'])
-
-def get_site_description():
-    site_description=None
-    try:           
-        with open("./Configuration/site-descriptor.json", "r") as s:
-            site_description = json.load(s)
-    except Exception as e:
-        logger.error(e)
-        print(e)
-    finally:
-        return site_description
