@@ -1,0 +1,54 @@
+{
+    "Download Link RegEx":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly",
+    "Download URL":{
+        "https://drive.google.com/":{
+            "URL":"https://drive.google.com/uc",
+            "action":"construct",
+            "Download Params":[{
+                "name": "id",
+                "type":"regex",
+                "value": "(?:id=|d\/)([a-zA-Z-0-9]*)"
+            },
+            {
+                "name": "export",
+                "type":"text",
+                "value": "download"
+            }],
+            "Cookies":[{
+                "name":"download_warning_",
+                "value":{
+                    "confirm":"{}"
+                },
+                "action":"read"
+            }] 
+        },
+        "www.datafilehost.com/d/":{
+            "URL":"http://www.datafilehost.com/get.php",
+            "action":"construct",            
+            "Download Params":[{
+                "name": "file",
+                "type":"regex",
+                "value": "d\/([0-9A-Za-z]*)"
+            }],
+            "Cookies":[{
+                "name":"PHPSESSID",
+                "value":{
+                    "PHPSESSID":"{}"
+                },
+                "action":"attach"
+            }] 
+        },        
+        "goo.gl":{
+            "URL":"http://goo.gl",
+            "action":"download"
+        },
+        "bit.ly":{
+            "URL":"http://bit.ly",
+            "action":"download"
+        },
+        "https://www.mediafire.com/file/":{
+            "URL":"#download_link",
+            "action":"download"
+        }
+    }   
+}

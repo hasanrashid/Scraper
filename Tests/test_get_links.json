@@ -24,7 +24,6 @@
         "element_type":"div"
     },
     "element_type_a":{
-        "class_name":"post-body entry-content",
         "element_type":"a"
     },
     "element_none":{
@@ -47,7 +46,6 @@
         }
     },    
     "css_selector_a_with_attribute":{
-        "class_name":"post-body entry-content",
         "css_selector":"div > a",
         "element_attribute":{
             "attribute": "href",

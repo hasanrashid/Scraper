@@ -1,6 +1,28 @@
 {
-    "google":{
-        "url_":"https://drive.google.com/uc?export=download&id=1msUU1DUbWn6A9G5m3eoM1ZwOhmusUVBe",
-        "title_":"Test"
+    "tp-bimal-kar":{
+        "url_":"https://drive.google.com/file/d/13mpttO8wxgPyxoJ2-9YP0nFQ1DbD5jK3/view",
+        "title_":"tp-bimal-kar"
+    },
+    "Google url with open?id": {
+        "url_": "https://drive.google.com/open?id=1msUU1DUbWn6A9G5m3eoM1ZwOhmusUVBe",
+        "title_":"Test 3"
+    },
+    "Google url with file/id":{
+        "url_":"https://drive.google.com/file/d/1Nx3eEFpl347SEidchWtVG1wR5F94JZ5N/view",
+        "title_":"Test 4"
+    },
+    "Comics 1 URL that has download cookie":{
+        "url_": "https://drive.google.com/open?id=16D7x4vJ7qrjvlAzIxSfsYGzfOR9fo0fa",
+        "title_":"Test 5"
+    },
+    "Comics 2 URL that has download cookie":{
+        "url_":"https://drive.google.com/open?id=16D7x4vJ7qrjvlAzIxSfsYGzfOR9fo0fa",
+        "title_":"Test 6"
+    },
+    "Del Carnegy datafilehost":{
+        "url_":"www.datafilehost.com/d/d9877a35",
+        "title_":"Lincoln"
+
     }
+
 }

@@ -1,7 +1,5 @@
 {
     "abdul-jabbar":{
-        "id_name":"post-body-9192865501445967797",
-        "class_name":"post-body entry-content",
         "element_type":"a",
         "element_attribute":{
             "attribute": "href",
@@ -10,7 +8,6 @@
     },        
     "abdul-jabbar-no-attribute":{
         "id_name":"post-body-9192865501445967797",
-        "class_name":"post-body entry-content",
-        "element_type":"a"
+        "class_name":"post-body entry-content"
     }
 }
