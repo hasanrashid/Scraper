@@ -62,8 +62,7 @@ class Downloader():
                         if(r['type'] == "text"):
                             params[r["name"]] = r["value"]
                             continue
-                    p = {json_entry['First URL'], params} if json_entry['First URL'] != 'unchanged' else {'url':file_url}
-                    resp = self.send_request(**p)
+                    resp = self.send_request(json_entry['First URL'], params) if json_entry['First URL'] != 'unchanged' else self.send_request(file_url)
                     if(json_entry['Cookies']):
                         for cookie,value in resp.cookies.items():                
                             for c in json_entry['Cookies']:
@@ -81,46 +80,4 @@ class Downloader():
             print(e)
         finally:
             return resp
-        #resp = self.send_request(d['URL'], params)
-        '''params["file"] = re.search(json_entry["Download Params"][], file_url).group(1)
-        #params["export"] = "download"
-        resp = self.send_request(file_url)
-        for cookie,value in resp.cookies.items():
-            if 'PHPSESSID' in cookie:
-                cookies['PHPSESSID']=value
-        resp = self.send_request("https://drive.google.com/uc", params=params)'''
 
-    def prepare_datafilehost_response(self,datafilehost_url):
-        params = {}
-        cookies = {}
-        params["file"] = re.search(r"d\/([0-9A-Za-z]*)", datafilehost_url).group(1)
-        #params["export"] = "download"
-        resp = self.send_request(datafilehost_url)
-        for cookie,value in resp.cookies.items():
-            if 'PHPSESSID' in cookie:
-                cookies['PHPSESSID']=value
-        resp = self.send_request("https://drive.google.com/uc", params=params)
-            
-    def prepare_google_response(self, google_url):
-        params = {}
-        params["id"] = re.search(r"(?:id=|d\/)([a-zA-Z-0-9]*)", google_url).group(1)
-        params["export"] = "download"
-        resp = self.send_request("https://drive.google.com/uc", params=params)
-        for cookie,value in resp.cookies.items():
-            if 'download_warning_' in cookie:
-                params['confirm']=value
-        resp = self.send_request("https://drive.google.com/uc", params=params)
-        return resp
-    
-'''
-    def download_files(self,file_anchors):
-        books_downloaded = []
-        try:
-            for f in file_anchors:
-                books_downloaded.append(self.download_file(f['href'],f.text))
-        except Exception as e:
-            logger.exception(e)
-            print(e)
-        finally:
-            return books_downloaded
-'''
