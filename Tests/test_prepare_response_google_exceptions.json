@@ -1,0 +1,15 @@
+{
+    "Google malformed url with open?id": {
+        "url": "https://drive1.google.com/open?id=1msUU1DUbWn6A9G5m3eoM1ZwOhmusUVBe"
+    },
+    "Google url with wrong open?id": {
+        "url": "https://drive.google.com/open?id=1sUU1DUbWn6A9G5m3eoM1ZwOhmusUVBe"
+    },
+    "Google malformed url with file/id":{
+        "url":"https://drive1.google.com/file/d/1Nx3eEFpl347SEidchWtVG1wR5F94JZ5N/view"
+    }
+    ,
+    "Google url with wrong file/id":{
+        "url":"https://drive1.google.com/file/d/Nx3eEFpl347SEidchWtVG1wR5F94JZ5N/view"
+    }
+}

@@ -2,49 +2,17 @@
     "Download Link RegEx":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly",
     "Download URL":{
         "drive.google.com":{
-            "action": "construct",
-            "First URL": "https://drive.google.com/uc",
-            "Second URL":"https://drive.google.com/uc",
-            "Request Params":[
-                {
-                    "name": "id",
-                    "type":"regex",
-                    "value": "(?:id=|d\/)([a-zA-Z-0-9]*)"
-                },
-                {
-                    "name": "export",
-                    "type":"text",
-                    "value": "download"
-                }
-            ],
-            "Cookies":[
-                {
-                    "name":"download_warning_",
-                    "action": "read",
-                    "value": "confirm"                    
-                }
-            ]
+            "URL": "https://drive.google.com/uc",
+            "File ID regex":"(?:id=|d\/)(?P<id>[a-zA-Z-0-9]*)",
+            "Request Params":{
+                "export":"download"
+            },
+            "Cookie":"download_warning"
         },
         "www.datafilehost.com":{
-            "action": "construct",
-            "First URL":"unchanged",
-            "Second URL":"http://www.datafilehost.com/get.php",
-            "Request Params":[
-                {
-                    "name": "file",
-                    "type":"regex",
-                    "value": "d\/([0-9A-Za-z]*)"
-                }
-            ],
-            "Cookies":[
-                {
-                    "name":"PHPSESSID",
-                    "value":{
-                        "PHPSESSID":"{}"
-                    },
-                    "action": "attach"    
-                }
-            ]
+            "URL":"http://www.datafilehost.com/get.php",
+            "File ID regex": "d\/(?P<file>[0-9A-Za-z]*)",
+            "Cookie":"PHPSESSID"
         },        
         "goo.gl":{
             "action":"download"
@@ -53,6 +21,7 @@
             "action":"download"
         },
         "www.mediafire.com":{
+            "URL":"#download_link",
             "action":"download"
         }
     }   

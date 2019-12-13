@@ -1,0 +1,28 @@
+{
+    "tp-bimal-kar wrong url":{
+        "url_":"https://drive1.google.com/file/d/13mpttO8wxgPyxoJ2-9YP0nFQ1DbD5jK3/view",
+        "title_":"tp-bimal-kar"
+    },
+    "tp-bimal-kar wrong id":{
+        "url_":"https://drive.google.com/file/d/3mpttO8wxgPyxoJ2-9YP0nFQ1DbD5jK3/view",
+        "title_":"tp-bimal-kar"
+    },
+    "Google url with open?id wrong URL": {
+        "url_": "https://drive1.google.com/open?id=1msUU1DUbWn6A9G5m3eoM1ZwOhmusUVBe",
+        "title_":"Test 3"
+    },
+    "Google url with open?id Wrong ID": {
+        "url_": "https://drive.google.com/open?id=msUU1DUbWn6A9G5m3eoM1ZwOhmusUVBe",
+        "title_":"Test 3"
+    },
+    "Del Carnegy datafilehost wrong url":{
+        "url_":"http://www.datafilehost1.com/d/d9877a35",
+        "title_":"Del Carnegy"
+
+    },
+    "Del Carnegy wrong ID datafilehost":{
+        "url_":"http://www.datafilehost.com/d/d9877a3",
+        "title_":"Del Carnegy"
+    }
+
+}
