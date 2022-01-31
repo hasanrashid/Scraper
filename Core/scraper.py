@@ -3,15 +3,14 @@ from bs4 import BeautifulSoup, SoupStrainer
 import requests
 import re, traceback, logging, configparser, json, os, sys, warnings, datetime
 from Configuration.config import logger, config_ini_settings, expression_mapping, raise_exception
-from Core.downloader import Downloader
+#from Core.downloader import Downloader
 import inspect
 
 class Scraper:
-    def __init__(self, url):
+    def __init__(self):
         try:
             logger.info('Starting Logger')
             self.request_header = {'user-agent': config_ini_settings['Values']['user-agent']}
-            self.url = url
             self.session = requests.session()
         except Exception as e:
             logger.exception(e)
@@ -22,24 +21,38 @@ class Scraper:
     '''
     def get_links(self,url, id_name=None,class_name=None, element_type=None, attribute_=None, css_selector=None):
         links = None
-        with requests.get(url, headers = self.request_header) as resp:
+        download_errors = config_ini_settings['Filenames']['download-errors']
+        try:
+            with requests.get(url, headers = self.request_header) as resp:
 
-            if(resp.status_code is not 200):
-                raise_exception(self,f"Request to url{url} came back with status {resp.status_code}")
+                if(resp.status_code != 200):
+                    logger.error(f"Request to url{url} came back with status {resp.status_code}")
+                    #raise_exception(self,f"Request to url{url} came back with status {resp.status_code}")
+                else:
+                    null_values = ['',None]        
 
-            null_values = ['',None]        
+                    if (all(x not in null_values for x in [id_name, class_name])):
+                        warnings.warn('Both css id and class was provided. class will be ignored')                 
 
-            if (all(x not in null_values for x in [id_name, class_name])):
-                warnings.warn('Both css id and class was provided. class will be ignored')                 
+                    if(id_name is not None):
+                        soup_strainer = SoupStrainer(element_type, id=id_name)
+                    elif(class_name is not None):
+                        soup_strainer = SoupStrainer(element_type, class_=class_name)
+                    else:
+                        soup_strainer = SoupStrainer(element_type)
 
-            bs = BeautifulSoup(resp.content,'html.parser', parse_only=SoupStrainer(element_type, id=id_name, class_=class_name))
+                    bs = BeautifulSoup(resp.content,'html.parser', parse_only=soup_strainer)
 
-            if(attribute_ not in null_values):
-                links = bs.find_all(attrs=attribute_)
-            elif(css_selector not in null_values):
-                links=bs.select(css_selector)
-            else:
-                links=bs.find_all('a')
-
-        return links
+                    if(attribute_ not in null_values):
+                        links = bs.find_all(attrs=attribute_)
+                    elif(css_selector not in null_values):
+                        links=bs.select(css_selector)
+                    else:
+                        links=bs.find_all('a')
+        except:
+            logger.error(book_title+'Not available')
+            with open(download_errors,'r',encoding='utf-8') as d:
+                d.writelines("Error downloading: "+book_title+" from "+file_url)
+        finally:
+            return links
 

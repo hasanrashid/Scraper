@@ -125,4 +125,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-indianbanglabook/Download 
+
+indianbanglabook/Download
+Client code/
+Download/
+Logs/
+.requirements.txt

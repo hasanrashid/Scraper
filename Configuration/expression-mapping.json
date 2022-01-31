@@ -1,15 +1,19 @@
 {
-    "Download Link RegEx":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly",
+    "Download Link RegEx1":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly",
+    "Download Link RegEx":"\/\/(?:download[0-9]*\\.|ia[0-9]*\\.)?(.*?)\/",
+    "File Extensions":["pdf","rar"],
     "Download URL":{
         "drive.google.com":{
+            "action":"process",
             "URL": "https://drive.google.com/uc",
-            "File ID regex":"(?:id=|d\/)(?P<id>[a-zA-Z-0-9]*)",
+            "File ID regex":"(?:id=|file\/d\/)(?P<id>[a-zA-Z0-9._-]*)",
             "Request Params":{
                 "export":"download"
             },
             "Cookie":"download_warning"
         },
         "www.datafilehost.com":{
+            "action":"process",
             "URL":"http://www.datafilehost.com/get.php",
             "File ID regex": "d\/(?P<file>[0-9A-Za-z]*)",
             "Cookie":"PHPSESSID"
@@ -20,8 +24,13 @@
         "bit.ly":{
             "action":"download"
         },
+        "mediafire.com":{
+            "action":"download"
+        },
         "www.mediafire.com":{
-            "URL":"#download_link",
+            "action":"download"
+        },
+        "us.archive.org":{
             "action":"download"
         }
     }   

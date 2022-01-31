@@ -31,3 +31,8 @@ class DownloaderMethodTests(unittest.TestCase):
     @file_data("test_prepare_response_google.json")
     def test_prepare_google(self, url):
         self.assertIsNotNone(self.downloader.prepare_google(self.downloader, url))
+
+    @file_data("test_prepare_response_mediafire.json")
+    def test_prepare_mediafire(self, url):
+        self.assertIsNotNone(self.downloader.prepare_mediafire(self.downloader, url))
+

@@ -1,30 +1,46 @@
+import requests
+import re, traceback, logging, configparser, json, os, sys, warnings, datetime
+from Core.decorator import Decorator as response_decorator
+from Configuration.config import logger, config_ini_settings, expression_mapping, raise_exception
+from Core.scraper import Scraper 
+@response_decorator
+def no_preparation_download(self, url, json_entry, params=None):
+    resp = self.send_request(url)   
+    return resp     
 
-import re
+@response_decorator
+def prepare_google(self, g_url, json_entry, params=None,headers_only=False):
+    params.update(json_entry['Request Params'])
+    resp = self.send_request(json_entry['URL'], params=params,headers_only=headers_only)
+    for cookie, value in resp.cookies.items():
+        if json_entry['Cookie'] in cookie:
+            params['confirm'] = value
+            break            
+    resp = self.send_request(json_entry['URL'], params=params)
+    return resp            
 
-def default_strategy(self, url):
-    resp = self.session.get(url, headers = self.request_header)
-    if (resp.status_code is not 200):
-        raise Exception("Request returned status code: "+str(resp.status_code))
-    return resp
+@response_decorator
+def prepare_mediafire(self,mediafire_url, json_entry=None, params=None,headers_only=False):
+    s = Scraper()
+    download_link = s.get_links(mediafire_url,element_type='a',id_name="downloadButton")
+    resp = self.send_request(download_link[0]['href'],headers_only=headers_only)
+    return resp            
 
-def prepare_datafilehost_response(self,datafilehost_url):
-        params = {}
-        cookies = {}
-        params["file"] = re.search(r"d\/([0-9A-Za-z]*)", datafilehost_url).group(1)
-        #params["export"] = "download"
-        resp = self.send_request(datafilehost_url)
-        for cookie,value in resp.cookies.items():
-            if 'PHPSESSID' in cookie:
-                cookies['PHPSESSID']=value
-        resp = self.send_request("https://drive.google.com/uc", params=params)
-            
-def prepare_google_response(self, google_url):
-    params = {}
-    params["id"] = re.search(r"(?:id=|d\/)([a-zA-Z-0-9]*)", google_url).group(1)
-    params["export"] = "download"
-    resp = self.send_request("https://drive.google.com/uc", params=params)
-    for cookie,value in resp.cookies.items():
-        if 'download_warning_' in cookie:
-            params['confirm']=value
-    resp = self.send_request("https://drive.google.com/uc", params=params)
-    return resp
+@response_decorator
+def prepare_us_archive(self,us_archive_url, json_entry=None, params=None,headers_only=False):
+
+    resp = self.send_request(us_archive_url,headers_only=headers_only)
+    return resp            
+
+
+@response_decorator
+def prepare_datafilehost(self,dfh_url, json_entry, params=None,headers_only=False):
+    cookies = {}
+    resp = self.send_request(dfh_url,headers_only=headers_only)
+    for cookie, value in resp.cookies.items():
+        if 'PHPSESSID' in json_entry['Cookie']:
+            cookies[cookie]=value
+            break                
+    resp = self.send_request(json_entry['URL'], params, cookies,headers_only=headers_only)
+    return resp            
+
