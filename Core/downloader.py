@@ -24,6 +24,7 @@ class Downloader():
     def __enter__(self):
         return self
 
+
     def send_request(self, url, params=None, cookies=None, headers_only=False):
 
         resp = self.session.get(url, headers = self.request_header, params=params, cookies=cookies, stream=True )
@@ -36,30 +37,32 @@ class Downloader():
     '''
     file_url is passed to the functtion- this is the actual download URL of the file
     '''
-    def download_file(self, file_url, book_title):
+    def download_file(self, file_url, book_title=None):
         book_info = None
         download_host_regex_match = re.search(expression_mapping['Download Link RegEx'], file_url)
         host_correct = False
         file_exists = False
         try:            
             if(not download_host_regex_match):
-                print(f"something wrong with the download host name {download_host}")
-                logger.error(f"something wrong with the name {file_url}")
+                print(f"something wrong with the link {file_url} from download host name {download_host}")
+                logger.error(f"something wrong with the link {file_url} from download host name {download_host}")
             else:        
                 download_host = download_host_regex_match.group(1)
                 if(download_host not in expression_mapping["Download URL"]):
                     print(f"{download_host} is not a known URL")
+                    logger.error(f"{download_host} is not a known URL")
                 else:
                     book_info = None
                     with self.prepare_function[download_host](self,file_url) as resp:
                         d = resp.headers['content-disposition']
-                        fname = re.findall("filename=\"(.+)\";*", resp.headers["Content-Disposition"])[0]
+                        if(not book_title):
+                            book_title = re.findall("filename=\"(.+)\";*", resp.headers["Content-Disposition"])[0]
                         for e in expression_mapping['File Extensions']:
-                            if(os.path.isfile(os.getcwd()+self.download_folder+fname)):
+                            if(os.path.isfile(os.getcwd()+self.download_folder+book_title)):
                                 file_exists = True
                                 break
                         if(not file_exists):
-                            with open(os.getcwd()+self.download_folder+fname, 'wb') as pdf_file, open(self.scraped_links,'a+',encoding='utf-8') as scraped_links:                
+                            with open(os.getcwd()+self.download_folder+book_title, 'wb') as pdf_file, open(self.scraped_links,'a+',encoding='utf-8') as scraped_links:                
                                 size = 0
                                 total_length = int(resp.headers.get('content-length'))
                                 extension = resp.headers['content-type'][-3:]
@@ -71,10 +74,10 @@ class Downloader():
                                 scraped_links.writelines("\n"+book_title+": "+str(size/(1024**2))+" Megabytes\n")
                         else:
                             logger.info(book_title+' already exists')
-                            print(fname+' already exists')
+                            print(book_title+' already exists')
         except Exception as e:
             print(e)
-            logger.error(book_title+'Not available')
+            logger.error(e)
             with open(download_errors,'r',encoding='utf-8') as d:
                 d.writelines("Error downloading: "+book_title+" from "+file_url)
         finally:
