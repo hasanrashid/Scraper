@@ -27,7 +27,6 @@ class Scraper:
 
                 if(resp.status_code != 200):
                     logger.error(f"Request to url{url} came back with status {resp.status_code}")
-                    #raise_exception(self,f"Request to url{url} came back with status {resp.status_code}")
                 else:
                     null_values = ['',None]        
 

@@ -15,7 +15,7 @@ with open("./Configuration/expression-mapping.json", "r") as s:
 logging.basicConfig(level=config_ini_settings['Logging']['level'],
    format=config_ini_settings['Logging']['formatter'],
    datefmt=config_ini_settings['Logging']['date-format'],
-   filename=config_ini_settings['Logging']['logs-folder']+config_ini_settings['Logging']['main-log']+' '+datetime.datetime.now().strftime('%Y-%m-%d')+'.log',
+   filename=config_ini_settings['Logging']['logs-folder']+"\\"+config_ini_settings['Logging']['main-log']+' '+datetime.datetime.now().strftime('%Y-%m-%d')+'.log',
    filemode='w')
 logger = logging.getLogger(config_ini_settings['Logging']['main-logger'])
 

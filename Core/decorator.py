@@ -25,13 +25,11 @@ class Decorator(object):
         json_entry = expression_mapping["Download URL"][host_url]
 
         if(json_entry["action"] != "download"):
-            #if(not all([json_entry['File ID regex'], json_entry['Cookie']])):
-                #raise_exception(self,f"Error in expression-mapping.json. Check {expression_mapping['Download URL']}")
+            if(not all([json_entry['File ID regex'], json_entry['Cookie']])):
+                raise_exception(self,f"Error in expression-mapping.json. Check {expression_mapping['Download URL']}")
             keys = json_entry.keys()
             if('File ID regex' in keys):
                 params  = re.search(json_entry['File ID regex'], file_url).groupdict()
-            #if('Download URL Anchor ID' in keys):
-                #l = Core.Scraper.get_links(file_url,element_type='a',id_name='downloadButton')
             if not params:
                 raise_exception(self,f"regex {json_entry['File ID regex']} did not return a match for {file_url}. Please check expression in expression-mappings.json")
         

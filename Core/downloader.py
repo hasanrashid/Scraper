@@ -24,16 +24,10 @@ class Downloader():
     def __enter__(self):
         return self
 
-    #def get_headers(self, url, params=None, cookies=None):
-
     def send_request(self, url, params=None, cookies=None, headers_only=False):
 
         resp = self.session.get(url, headers = self.request_header, params=params, cookies=cookies, stream=True )
         
-        '''if(resp.status_code == 302):
-                resp = self.session.head(resp.url, headers = self.request_header, params=params, cookies=cookies)
-        elif(resp.status_code == 405):
-                resp = self.session.get(url, headers = self.request_header, params=params, cookies=cookies, stream=True )'''
         if(resp.status_code != 200):
             raise_exception(self,f"Request returned status code {resp.status_code}")
 
@@ -57,8 +51,6 @@ class Downloader():
                     print(f"{download_host} is not a known URL")
                 else:
                     book_info = None
-                    #download_response = self.prepare_function[download_host](self,file_url)
-                    #download_response.headers
                     with self.prepare_function[download_host](self,file_url) as resp:
                         d = resp.headers['content-disposition']
                         fname = re.findall("filename=\"(.+)\";*", resp.headers["Content-Disposition"])[0]
@@ -71,7 +63,6 @@ class Downloader():
                                 size = 0
                                 total_length = int(resp.headers.get('content-length'))
                                 extension = resp.headers['content-type'][-3:]
-                                #d = r.headers['content-disposition']
                                 for chunk in progress.bar(resp.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
                                     if chunk:
                                         pdf_file.write(chunk)
