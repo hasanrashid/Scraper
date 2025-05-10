@@ -4,7 +4,6 @@ A Python command-line application that uses object-oriented design to identify a
 
 ## Features
 
-- 🧭 Command-line interface for ease of use
 - 🧱 Object-oriented architecture for maintainability and scalability
 - 🌐 Parses web pages using CSS selectors
 - 📎 Extracts links pointing to PDF documents
@@ -12,7 +11,7 @@ A Python command-line application that uses object-oriented design to identify a
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.9+
 - [requests](https://pypi.org/project/requests/)
 - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
 
