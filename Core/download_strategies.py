@@ -3,6 +3,8 @@ import re, traceback, logging, configparser, json, os, sys, warnings, datetime
 from Core.decorator import Decorator as response_decorator
 from Configuration.config import logger, config_ini_settings, expression_mapping, raise_exception
 from Core.scraper import Scraper 
+from mega import Mega
+
 @response_decorator
 def no_preparation_download(self, url, json_entry, params=None):
     resp = self.send_request(url)   
@@ -41,6 +43,15 @@ def prepare_datafilehost(self,dfh_url, json_entry, params=None,headers_only=Fals
         if 'PHPSESSID' in json_entry['Cookie']:
             cookies[cookie]=value
             break                
+    resp = self.send_request(json_entry['URL'], params, cookies,headers_only=headers_only)
+    return resp            
+
+@response_decorator
+def prepare_mega(self,mega_url, json_entry, params=None,headers_only=False):
+    cookies = {}
+    mega = Mega()
+    mega.download_url(mega_url)
+    file = mega.download()
     resp = self.send_request(json_entry['URL'], params, cookies,headers_only=headers_only)
     return resp            
 

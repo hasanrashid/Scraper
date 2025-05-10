@@ -32,6 +32,9 @@
         },
         "us.archive.org":{
             "action":"download"
+        },
+        "mega.nz":{
+            "action":"download"
         }
     }   
 }

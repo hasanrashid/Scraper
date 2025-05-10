@@ -15,11 +15,12 @@ class Scraper:
         except Exception as e:
             logger.exception(e)
             print(e)
+
     '''
     Method is given a url, optinal id and/or class name and an element type that defaults to an
     HTML anchor.
     '''
-    def get_links(self,url, id_name=None,class_name=None, element_type=None, attribute_=None, css_selector=None):
+    def get_links(self,url, id_name=None,class_name=None, element_type=None, attribute_=None, css_selector=None,features=None,links_only=True):
         links = None
         download_errors = config_ini_settings['Filenames']['download-errors']
         try:
@@ -39,17 +40,27 @@ class Scraper:
                         soup_strainer = SoupStrainer(element_type, class_=class_name)
                     else:
                         soup_strainer = SoupStrainer(element_type)
-
-                    bs = BeautifulSoup(resp.content,'html.parser', parse_only=soup_strainer)
+                    if(features=='xml'):
+                        bs = BeautifulSoup(resp.content,'xml', parse_only=soup_strainer)
+                    else:
+                        bs = BeautifulSoup(resp.content,'html.parser', parse_only=soup_strainer)
 
                     if(attribute_ not in null_values):
                         links = bs.find_all(attrs=attribute_)
                     elif(css_selector not in null_values):
                         links=bs.select(css_selector)
                     else:
-                        links=bs.find_all('a')
+                        if(features =='xml'):
+                            links=bs.find_all('loc')
+                        else:
+                            if(links_only == True):
+                                links=bs.find_all('a')
+                            else:
+                                links = bs.find_all()
         except:
             logger.error(book_title+'Not available')
+            logger.error(e)
+            print(e)
             with open(download_errors,'r',encoding='utf-8') as d:
                 d.writelines("Error downloading: "+book_title+" from "+file_url)
         finally:

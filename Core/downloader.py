@@ -8,6 +8,8 @@ from clint.textui import progress
 import  Core.download_strategies as strategies
 from tqdm import tqdm
 
+#https://mega.nz/file/rstD0S4a#mcGTRB3h7Q_I1k5LA5YPoo2lYGftStktGenNWersE5o
+
 class Downloader():
 
     def __init__(self):
@@ -16,7 +18,7 @@ class Downloader():
             self.scraped_links, self.download_folder, self.download_errors = config_ini_settings['Filenames']['scraped-links'], config_ini_settings['Filenames']['download-folder'], config_ini_settings['Filenames']['download-errors']
             self.request_header = {'user-agent': config_ini_settings['Values']['user-agent']}
             self.session = requests.session()
-            self.prepare_function = {'drive.google.com':strategies.prepare_google, 'www.datafilehost.com':strategies.prepare_datafilehost, 'mediafire.com':strategies.no_preparation_download, 'www.mediafire.com':strategies.prepare_mediafire}
+            self.prepare_function = {'mega.nz':strategies.prepare_mega,'drive.google.com':strategies.prepare_google, 'www.datafilehost.com':strategies.prepare_datafilehost, 'mediafire.com':strategies.no_preparation_download, 'www.mediafire.com':strategies.prepare_mediafire}
         except Exception as e:
             logger.exception(e)
             print(e)
