@@ -1,6 +1,5 @@
-# PDF Link Finder and Downloader
-
-A Python command-line application that uses object-oriented design to identify and download documents from web pages. Given a URL and optional CSS selectors, the tool locates all links pointing to PDF files and provides a list of URLs, with the option to automatically download them.
+# Scraper
+A Python application that uses object-oriented design to identify and download documents from web pages. Given a URL and optional CSS selectors, the tool locates all links pointing to PDF files and provides a list of URLs, with the option to automatically download them.
 
 ## Features
 
