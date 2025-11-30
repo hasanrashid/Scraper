@@ -1,0 +1,14 @@
+
+Error downloading: https://drive.google.com/open?id=16D7x4vJ7qrjvlAzIxSfsYGzfOR9fo0fa - 'content-disposition'
+
+Error downloading: https://drive.google.com/open?id=16D7x4vJ7qrjvlAzIxSfsYGzfOR9fo0fa - 'content-disposition'
+
+Error downloading: http://www.datafilehost.com/d/d9877a35 - 'content-disposition'
+
+Error downloading: https://download2263.mediafire.com/2zfq5332q98g/i6es03vnfzfmcxo/ACK+219.pdf - no_preparation_download() takes from 3 to 4 positional arguments but 5 were given
+
+Error downloading: https://drive.google.com/file/d/3mpttO8wxgPyxoJ2-9YP0nFQ1DbD5jK3/view - raise_exception() takes 1 positional argument but 2 were given
+
+Error downloading: https://drive.google.com/open?id=msUU1DUbWn6A9G5m3eoM1ZwOhmusUVBe - raise_exception() takes 1 positional argument but 2 were given
+
+Error downloading: http://www.datafilehost.com/d/d9877a3 - 'content-disposition'

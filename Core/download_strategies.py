@@ -3,10 +3,10 @@ import re, traceback, logging, configparser, json, os, sys, warnings, datetime
 from Core.decorator import Decorator as response_decorator
 from Configuration.config import logger, config_ini_settings, expression_mapping, raise_exception
 from Core.scraper import Scraper 
-from mega import Mega
+# from mega import Mega  # Temporarily disabled due to version compatibility issues
 
 @response_decorator
-def no_preparation_download(self, url, json_entry, params=None):
+def no_preparation_download(self, url, json_entry=None, params=None):
     resp = self.send_request(url)   
     return resp     
 
@@ -47,11 +47,13 @@ def prepare_datafilehost(self,dfh_url, json_entry, params=None,headers_only=Fals
     return resp            
 
 @response_decorator
-def prepare_mega(self,mega_url, json_entry, params=None,headers_only=False):
-    cookies = {}
-    mega = Mega()
-    mega.download_url(mega_url)
-    file = mega.download()
-    resp = self.send_request(json_entry['URL'], params, cookies,headers_only=headers_only)
-    return resp            
+def prepare_mega(self, mega_url, json_entry, params=None, headers_only=False):
+    # TODO: Re-enable when mega.py compatibility is fixed
+    raise NotImplementedError("Mega.nz downloads temporarily disabled due to dependency compatibility issues")
+    # cookies = {}
+    # mega = Mega()
+    # mega.download_url(mega_url)
+    # file = mega.download()
+    # resp = self.send_request(json_entry['URL'], params, cookies, headers_only=headers_only)
+    # return resp
 

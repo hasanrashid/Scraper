@@ -14,6 +14,10 @@ class Decorator(object):
     def __enter__(self):
         return self
 
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # Clean up resources if needed
+        return False
+
     def __call__(self, downloader, file_url, headers_only=True):
         
         host_url = re.search(expression_mapping['Download Link RegEx'], file_url).group(1)

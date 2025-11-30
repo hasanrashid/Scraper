@@ -1,5 +1,6 @@
 import itertools
 import functools
+from typing import Optional, Dict, Tuple, Any
 import requests
 import re, traceback, logging, configparser, json, os, sys, warnings, datetime
 from Core.decorator import Decorator as response_decorator
@@ -12,22 +13,32 @@ from tqdm import tqdm
 
 class Downloader():
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             logger.info('Starting Logger')
-            self.scraped_links, self.download_folder, self.download_errors = config_ini_settings['Filenames']['scraped-links'], config_ini_settings['Filenames']['download-folder'], config_ini_settings['Filenames']['download-errors']
-            self.request_header = {'user-agent': config_ini_settings['Values']['user-agent']}
-            self.session = requests.session()
-            self.prepare_function = {'mega.nz':strategies.prepare_mega,'drive.google.com':strategies.prepare_google, 'www.datafilehost.com':strategies.prepare_datafilehost, 'mediafire.com':strategies.no_preparation_download, 'www.mediafire.com':strategies.prepare_mediafire}
+            self.scraped_links: str = config_ini_settings['Filenames']['scraped-links']
+            self.download_folder: str = config_ini_settings['Filenames']['download-folder'] 
+            self.download_errors: str = config_ini_settings['Filenames']['download-errors']
+            self.request_header: Dict[str, str] = {'user-agent': config_ini_settings['Values']['user-agent']}
+            self.session: requests.Session = requests.session()
+            self.prepare_function: Dict[str, Any] = {
+                'mega.nz': strategies.prepare_mega,
+                'drive.google.com': strategies.prepare_google, 
+                'www.datafilehost.com': strategies.prepare_datafilehost, 
+                'mediafire.com': strategies.no_preparation_download, 
+                'www.mediafire.com': strategies.prepare_mediafire
+            }
         except Exception as e:
             logger.exception(e)
             print(e)
 
-    def __enter__(self):
+    def __enter__(self) -> 'Downloader':
         return self
 
 
-    def send_request(self, url, params=None, cookies=None, headers_only=False):
+    def send_request(self, url: str, params: Optional[Dict[str, Any]] = None, 
+                     cookies: Optional[Dict[str, str]] = None, 
+                     headers_only: bool = False) -> requests.Response:
 
         resp = self.session.get(url, headers = self.request_header, params=params, cookies=cookies, stream=True )
         
@@ -39,15 +50,16 @@ class Downloader():
     '''
     file_url is passed to the functtion- this is the actual download URL of the file
     '''
-    def download_file(self, file_url, book_title=None):
+    def download_file(self, file_url: str, book_title: Optional[str] = None) -> Optional[Tuple[str, int]]:
         book_info = None
         download_host_regex_match = re.search(expression_mapping['Download Link RegEx'], file_url)
         host_correct = False
         file_exists = False
         try:            
             if(not download_host_regex_match):
-                print(f"something wrong with the link {file_url} from download host name {download_host}")
-                logger.error(f"something wrong with the link {file_url} from download host name {download_host}")
+                error_msg = f"Invalid URL format: {file_url}"
+                print(error_msg)
+                logger.error(error_msg)
             else:        
                 download_host = download_host_regex_match.group(1)
                 if(download_host not in expression_mapping["Download URL"]):
@@ -56,9 +68,15 @@ class Downloader():
                 else:
                     book_info = None
                     with self.prepare_function[download_host](self,file_url) as resp:
-                        d = resp.headers['content-disposition']
-                        if(not book_title):
-                            book_title = re.findall("filename=\"(.+)\";*", resp.headers["Content-Disposition"])[0]
+                        # Handle missing content-disposition header
+                        if 'content-disposition' not in resp.headers:
+                            logger.warning(f"No content-disposition header found for {file_url}")
+                            if not book_title:
+                                book_title = f"download_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+                        else:
+                            d = resp.headers['content-disposition']
+                            if(not book_title):
+                                book_title = re.findall("filename=\"(.+)\";*", resp.headers["Content-Disposition"])[0]
                         for e in expression_mapping['File Extensions']:
                             if(os.path.isfile(os.getcwd()+self.download_folder+book_title)):
                                 file_exists = True
@@ -78,10 +96,11 @@ class Downloader():
                             logger.info(book_title+' already exists')
                             print(book_title+' already exists')
         except Exception as e:
-            print(e)
-            logger.error(e)
-            with open(download_errors,'r',encoding='utf-8') as d:
-                d.writelines("Error downloading: "+book_title+" from "+file_url)
+            error_msg = f"Download error for {file_url}: {str(e)}"
+            print(error_msg)
+            logger.error(error_msg)
+            with open(self.download_errors,'a',encoding='utf-8') as d:
+                d.write(f"\nError downloading: {file_url} - {str(e)}\n")
         finally:
             return book_info
 
