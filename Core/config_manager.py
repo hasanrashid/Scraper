@@ -45,6 +45,27 @@ class ConfigManager(ABC):
     def get_logger(self) -> logging.Logger:
         """Get the configured logger instance"""
         pass
+    
+    # PDF Book Crawler specific configuration methods
+    @abstractmethod
+    def get_min_book_size_mb(self) -> float:
+        """Get minimum file size for book classification in MB"""
+        pass
+    
+    @abstractmethod
+    def get_book_csv_output_file(self) -> str:
+        """Get the CSV output file path for book discoveries"""
+        pass
+    
+    @abstractmethod
+    def get_book_patterns(self) -> List[str]:
+        """Get regex patterns for identifying book-like filenames"""
+        pass
+    
+    @abstractmethod
+    def get_extract_pdf_metadata(self) -> bool:
+        """Whether to extract metadata from PDF files"""
+        pass
 
 
 class IniConfigManager(ConfigManager):
@@ -140,6 +161,27 @@ class IniConfigManager(ConfigManager):
     
     def get_logger(self) -> logging.Logger:
         return self.logger
+    
+    # PDF Book Crawler configuration implementations
+    def get_min_book_size_mb(self) -> float:
+        return float(self.ini_config.get('BookCrawler', 'min-book-size-mb', fallback='1.0'))
+    
+    def get_book_csv_output_file(self) -> str:
+        return self.ini_config.get('Filenames', 'book-csv-output', fallback='discovered_books.csv')
+    
+    def get_book_patterns(self) -> List[str]:
+        patterns_str = self.ini_config.get('BookCrawler', 'book-patterns', 
+                                         fallback='[".*book.*", ".*manual.*", ".*guide.*", ".*tutorial.*"]')
+        # Parse JSON list format
+        import json
+        try:
+            return json.loads(patterns_str)
+        except:
+            # Fallback to comma-separated values
+            return [p.strip().strip('"') for p in patterns_str.split(',')]
+    
+    def get_extract_pdf_metadata(self) -> bool:
+        return self.ini_config.getboolean('BookCrawler', 'extract-pdf-metadata', fallback=True)
 
 
 class TestConfigManager(ConfigManager):
@@ -189,3 +231,16 @@ class TestConfigManager(ConfigManager):
     
     def get_logger(self) -> logging.Logger:
         return self.logger
+    
+    # PDF Book Crawler test configuration
+    def get_min_book_size_mb(self) -> float:
+        return 0.1  # Lower threshold for testing
+    
+    def get_book_csv_output_file(self) -> str:
+        return '/tmp/test-books.csv'
+    
+    def get_book_patterns(self) -> List[str]:
+        return ['.*book.*', '.*manual.*', '.*guide.*']
+    
+    def get_extract_pdf_metadata(self) -> bool:
+        return False  # Skip metadata extraction in tests for speed
