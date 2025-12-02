@@ -1,3 +1,21 @@
+"""
+DEPRECATED: This configuration module is deprecated in favor of ConfigManager.
+
+This module is kept for backward compatibility with legacy code.
+New code should use Core.config_manager.ConfigManager instead.
+
+The regex patterns from this file have been moved to:
+- Configuration/regex_patterns.json (organized patterns)
+- Core/regex_manager.py (pattern management)
+"""
+
+import warnings
+warnings.warn(
+    "Configuration.config is deprecated. Use Core.config_manager.ConfigManager instead.",
+    DeprecationWarning,
+    stacklevel=2
+)
+
 import configparser, logging, datetime, json
 import os
 from pathlib import Path

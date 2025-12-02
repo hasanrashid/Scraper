@@ -57,31 +57,22 @@ class PDFBookCrawler:
         self.http_client = http_client
         self.scraper = scraper
         self.logger = config_manager.get_logger()
+        self.regex_manager = config_manager.get_regex_manager()
         
         # Book discovery settings
         self.min_book_size = config_manager.get_min_book_size_mb()
         self.csv_output_file = config_manager.get_book_csv_output_file()
-        self.book_patterns = [re.compile(pattern, re.IGNORECASE) 
-                            for pattern in config_manager.get_book_patterns()]
+        self.book_patterns = self.regex_manager.get_patterns_list('book_detection', 'book_keywords')
         self.extract_metadata = config_manager.get_extract_pdf_metadata()
         
         # Discovered books
         self.discovered_books: List[BookMetadata] = []
         
-        # Book classification patterns
-        self.author_patterns = [
-            re.compile(r'by[_\s]+([A-Za-z\s\.]+)', re.IGNORECASE),
-            re.compile(r'([A-Za-z\s\.]+)[_\s]*-[_\s]*(.+)\.pdf', re.IGNORECASE),
-            re.compile(r'([A-Za-z\s\.]+)[_\s]+([A-Za-z\s\.]+)\.pdf', re.IGNORECASE)
-        ]
-        
-        self.title_patterns = [
-            re.compile(r'([A-Za-z\s\d\.\-_:;,!?]+)\.pdf$', re.IGNORECASE),
-            re.compile(r'[A-Za-z\s\.]+-([A-Za-z\s\d\.\-_:;,!?]+)\.pdf', re.IGNORECASE)
-        ]
-        
-        self.isbn_pattern = re.compile(r'isbn[:\s]*(\d{9,13})', re.IGNORECASE)
-        self.year_pattern = re.compile(r'(19|20)\d{2}')
+        # Get compiled patterns from regex manager
+        self.author_patterns = self.regex_manager.get_patterns_list('book_detection', 'author_extraction')
+        self.title_patterns = self.regex_manager.get_patterns_list('book_detection', 'title_extraction')
+        self.isbn_pattern = self.regex_manager.get_pattern('book_detection', 'isbn_detection')
+        self.year_pattern = self.regex_manager.get_pattern('book_detection', 'year_detection')
     
     def crawl_for_books(self, start_url: str, max_depth: int = 3, 
                        max_pages: int = 100) -> List[BookMetadata]:
@@ -304,8 +295,8 @@ class PDFBookCrawler:
                 return title
         
         # Fallback: clean up the filename
-        title = re.sub(r'[_-]', ' ', name)
-        title = re.sub(r'\s+', ' ', title).strip()
+        title = self.regex_manager.substitute('pdf_site_crawler.text_cleaning', 'underscores_hyphens', name, ' ')
+        title = self.regex_manager.substitute('pdf_site_crawler.text_cleaning', 'multiple_spaces', title, ' ').strip()
         return title
     
     def _extract_author_from_filename(self, filename: str) -> str:
@@ -317,8 +308,8 @@ class PDFBookCrawler:
             if match:
                 author = match.group(1)
                 # Clean up author name
-                author = re.sub(r'[_-]', ' ', author)
-                author = re.sub(r'\s+', ' ', author).strip()
+                author = self.regex_manager.substitute('pdf_site_crawler.text_cleaning', 'underscores_hyphens', author, ' ')
+                author = self.regex_manager.substitute('pdf_site_crawler.text_cleaning', 'multiple_spaces', author, ' ').strip()
                 # Check if it looks like a person's name
                 if self._is_likely_person_name(author):
                     return author

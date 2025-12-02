@@ -46,6 +46,16 @@ class ConfigManager(ABC):
         """Get the configured logger instance"""
         pass
     
+    @abstractmethod
+    def get_regex_manager(self):
+        """Get the regex pattern manager instance"""
+        pass
+    
+    @abstractmethod
+    def get_regex_manager(self):
+        """Get the regex pattern manager instance"""
+        pass
+    
     # PDF Book Crawler specific configuration methods
     @abstractmethod
     def get_min_book_size_mb(self) -> float:
@@ -121,6 +131,7 @@ class IniConfigManager(ConfigManager):
                  json_path: str = "./Configuration/expression-mapping.json"):
         self._load_configuration(ini_path, json_path)
         self._setup_logging()
+        self._setup_regex_manager()
         self._ensure_directories()
     
     def _load_configuration(self, ini_path: str, json_path: str):
@@ -182,6 +193,11 @@ class IniConfigManager(ConfigManager):
         
         self.logger = logging.getLogger(self.ini_config['Logging']['main-logger'])
     
+    def _setup_regex_manager(self):
+        """Setup regex pattern manager"""
+        from Core.regex_manager import RegexManager
+        self.regex_manager = RegexManager()
+    
     def _ensure_directories(self):
         """Create necessary directories"""
         download_folder_path = os.path.join(os.getcwd(), self.get_download_folder())
@@ -207,6 +223,9 @@ class IniConfigManager(ConfigManager):
     
     def get_logger(self) -> logging.Logger:
         return self.logger
+    
+    def get_regex_manager(self):
+        return self.regex_manager
     
     # PDF Book Crawler configuration implementations
     def get_min_book_size_mb(self) -> float:
@@ -282,6 +301,10 @@ class TestConfigManager(ConfigManager):
         logging.basicConfig(level=logging.DEBUG)
         self.logger = logging.getLogger('TestLogger')
         
+        # Setup regex manager for tests
+        from Core.regex_manager import RegexManager
+        self.regex_manager = RegexManager()
+        
         # Ensure test directories exist
         os.makedirs('/tmp/test-downloads', exist_ok=True)
     
@@ -305,6 +328,9 @@ class TestConfigManager(ConfigManager):
     
     def get_logger(self) -> logging.Logger:
         return self.logger
+    
+    def get_regex_manager(self):
+        return self.regex_manager
 
     # Site Crawler test configuration implementations
     def get_pdf_documents_csv(self) -> str:
@@ -333,3 +359,16 @@ class TestConfigManager(ConfigManager):
     
     def get_max_pdf_size_mb(self) -> float:
         return 50.0  # Smaller for tests
+
+    # PDF Book Crawler test methods
+    def get_min_book_size_mb(self) -> float:
+        return 0.5  # Smaller for tests
+    
+    def get_book_csv_output_file(self) -> str:
+        return '/tmp/test-books.csv'
+    
+    def get_book_patterns(self) -> List[str]:
+        return ['.*book.*', '.*manual.*', '.*guide.*']
+    
+    def get_extract_pdf_metadata(self) -> bool:
+        return True

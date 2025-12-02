@@ -1,0 +1,71 @@
+{
+  "book_detection": {
+    "book_keywords": [
+      "(?i).*\\b(book|ebook|manual|guide|tutorial|textbook)\\b.*",
+      "(?i).*\\b(chapter|volume|edition)\\b.*",
+      "(?i).*\\b(handbook|reference|documentation)\\b.*"
+    ],
+    "author_extraction": [
+      "by[_\\s]+([A-Za-z\\s\\.]+)",
+      "([A-Za-z\\s\\.]+)[_\\s]*-[_\\s]*(.+)\\.pdf",
+      "([A-Za-z\\s\\.]+)[_\\s]+([A-Za-z\\s\\.]+)\\.pdf"
+    ],
+    "title_extraction": [
+      "([A-Za-z\\s\\d\\.\\-_:;,!?]+)\\.pdf$",
+      "[A-Za-z\\s\\.]+-([A-Za-z\\s\\d\\.\\-_:;,!?]+)\\.pdf"
+    ],
+    "isbn_detection": "isbn[:\\s]*(\\d{9,13})",
+    "year_detection": "(19|20)\\d{2}"
+  },
+  "pdf_site_crawler": {
+    "title_patterns": [
+      "([^/\\\\]+?)\\.pdf$",
+      "/([^/]+)\\.pdf$"
+    ],
+    "author_patterns": [
+      "by[_\\s-]+([A-Za-z\\s\\.]+)",
+      "([A-Za-z\\s\\.]+)[_\\s-]+-[_\\s-]*[^/]*\\.pdf",
+      "/([A-Za-z]+[_\\s]+[A-Za-z]+)[_\\s-]*[^/]*\\.pdf"
+    ],
+    "page_metadata": {
+      "title_author_split": "^(.+?)\\s*[-–]\\s*([^|]+?)(?:\\s+pdf)?$",
+      "pdf_text_removal": "\\s*pdf\\s*",
+      "site_name_removal": "\\s*bangla\\s*book.*"
+    },
+    "text_cleaning": {
+      "underscores_hyphens": "[_-]",
+      "url_spaces": "%20",
+      "multiple_spaces": "\\s+",
+      "filename_cleanup": "[^a-zA-Z0-9\\s\\-_\\.]+"
+    }
+  },
+  "download_processing": {
+    "host_detection": "\\/\\/(?:download[0-9]*\\.|ia[0-9]*\\.)?(.*?)\\/",
+    "host_matching": "mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly",
+    "filename_from_header": "filename=\"(.+)\";*",
+    "file_id_extraction": {
+      "google_drive": "(?:id=|file\\/d\\/)(?P<id>[a-zA-Z0-9._-]*)",
+      "datafilehost": "d\\/(?P<file>[0-9A-Za-z]*)",
+      "mediafire": "file\\/([a-zA-Z0-9]+)",
+      "mega_nz": "file\\/([a-zA-Z0-9]+)"
+    }
+  },
+  "validation": {
+    "file_extensions": [
+      "\\.pdf$",
+      "\\.PDF$"
+    ],
+    "url_schemes": "^https?://",
+    "person_name_validation": "^[A-Z][a-zA-Z\\s\\.]{1,49}$",
+    "excluded_extensions": "\\.(jpg|jpeg|png|gif|css|js|ico|zip|rar|exe|doc|docx)$"
+  },
+  "social_media_exclusions": [
+    "pinterest\\.com",
+    "tumblr\\.com", 
+    "reddit\\.com",
+    "facebook\\.com",
+    "twitter\\.com",
+    "linkedin\\.com",
+    "share\\.flipboard\\.com"
+  ]
+}

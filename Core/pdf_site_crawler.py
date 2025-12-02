@@ -110,6 +110,9 @@ class PDFSiteCrawler:
         self.scraper = scraper
         self.logger = config_manager.get_logger()
         
+        # Initialize regex manager
+        self.regex_manager = config_manager.get_regex_manager()
+        
         # Load crawler configuration
         self.max_pages = config_manager.get_max_pages_per_site()
         self.max_depth = config_manager.get_max_crawl_depth()
