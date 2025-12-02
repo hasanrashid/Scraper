@@ -46,6 +46,52 @@ class ConfigManager(ABC):
         """Get the configured logger instance"""
         pass
 
+    # Site Crawler configuration methods
+    @abstractmethod
+    def get_pdf_documents_csv(self) -> str:
+        """Get the PDF documents CSV output file path"""
+        pass
+    
+    @abstractmethod
+    def get_sitemap_urls_file(self) -> str:
+        """Get the sitemap URLs file path"""
+        pass
+    
+    @abstractmethod
+    def get_max_pages_per_site(self) -> int:
+        """Get maximum pages to crawl per site"""
+        pass
+    
+    @abstractmethod
+    def get_max_crawl_depth(self) -> int:
+        """Get maximum crawl depth"""
+        pass
+    
+    @abstractmethod
+    def get_request_delay(self) -> float:
+        """Get delay between requests in seconds"""
+        pass
+    
+    @abstractmethod
+    def get_follow_external_links(self) -> bool:
+        """Whether to follow external links"""
+        pass
+    
+    @abstractmethod
+    def get_extract_pdf_content(self) -> bool:
+        """Whether to extract PDF content/metadata"""
+        pass
+    
+    @abstractmethod
+    def get_min_pdf_size_kb(self) -> float:
+        """Get minimum PDF file size in KB"""
+        pass
+    
+    @abstractmethod
+    def get_max_pdf_size_mb(self) -> float:
+        """Get maximum PDF file size in MB"""
+        pass
+
 
 class IniConfigManager(ConfigManager):
     """Configuration manager that loads from INI and JSON files"""
@@ -141,6 +187,34 @@ class IniConfigManager(ConfigManager):
     def get_logger(self) -> logging.Logger:
         return self.logger
 
+    # Site Crawler configuration implementations
+    def get_pdf_documents_csv(self) -> str:
+        return self.ini_config.get('Filenames', 'pdf-documents-csv', fallback='pdf_documents.csv')
+    
+    def get_sitemap_urls_file(self) -> str:
+        return self.ini_config.get('Filenames', 'sitemap-urls', fallback='sitemap_urls.txt')
+    
+    def get_max_pages_per_site(self) -> int:
+        return int(self.ini_config.get('SiteCrawler', 'max-pages-per-site', fallback='1000'))
+    
+    def get_max_crawl_depth(self) -> int:
+        return int(self.ini_config.get('SiteCrawler', 'max-crawl-depth', fallback='10'))
+    
+    def get_request_delay(self) -> float:
+        return float(self.ini_config.get('SiteCrawler', 'request-delay', fallback='1.0'))
+    
+    def get_follow_external_links(self) -> bool:
+        return self.ini_config.getboolean('SiteCrawler', 'follow-external-links', fallback=False)
+    
+    def get_extract_pdf_content(self) -> bool:
+        return self.ini_config.getboolean('SiteCrawler', 'extract-pdf-content', fallback=True)
+    
+    def get_min_pdf_size_kb(self) -> float:
+        return float(self.ini_config.get('SiteCrawler', 'min-pdf-size-kb', fallback='50'))
+    
+    def get_max_pdf_size_mb(self) -> float:
+        return float(self.ini_config.get('SiteCrawler', 'max-pdf-size-mb', fallback='100'))
+
 
 class TestConfigManager(ConfigManager):
     """Configuration manager for testing purposes"""
@@ -189,3 +263,31 @@ class TestConfigManager(ConfigManager):
     
     def get_logger(self) -> logging.Logger:
         return self.logger
+
+    # Site Crawler test configuration implementations
+    def get_pdf_documents_csv(self) -> str:
+        return '/tmp/test-pdf-documents.csv'
+    
+    def get_sitemap_urls_file(self) -> str:
+        return '/tmp/test-sitemap-urls.txt'
+    
+    def get_max_pages_per_site(self) -> int:
+        return 50  # Smaller for tests
+    
+    def get_max_crawl_depth(self) -> int:
+        return 3   # Smaller for tests
+    
+    def get_request_delay(self) -> float:
+        return 0.1 # Faster for tests
+    
+    def get_follow_external_links(self) -> bool:
+        return False
+    
+    def get_extract_pdf_content(self) -> bool:
+        return True
+    
+    def get_min_pdf_size_kb(self) -> float:
+        return 10.0  # Smaller for tests
+    
+    def get_max_pdf_size_mb(self) -> float:
+        return 50.0  # Smaller for tests
