@@ -132,4 +132,25 @@ indianbanglabook/Download
 Client code/
 Download/
 Logs/
+
+# CSV output files
+*.csv
+CSV/
+
+# Log files (additional patterns)
+*.log
+Logs/*.log
+
+# Configuration files with sensitive data
+Configuration/config.ini
+
+# Scraped data and output files
+links-*.txt
+download_error.txt
+sitemap_urls.txt
+pdf_documents.csv
+
+# Temporary files
+*.tmp
+*.temp
 .requirements.txt
