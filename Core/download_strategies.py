@@ -1,5 +1,5 @@
 import requests
-import re, traceback, logging, configparser, json, os, sys, warnings, datetime
+import re, traceback, logging, configparser, json, os, sys, warnings, datetime, tempfile
 import urllib.parse
 import base64
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
@@ -99,8 +99,6 @@ def prepare_mega(self, mega_url, json_entry=None, params=None, headers_only=Fals
         
         # Initialize Mega client and download
         try:
-            import tempfile
-            
             mega = Mega()
             timeout_seconds = getattr(self, 'mega_download_timeout_seconds', 900)
             
@@ -200,7 +198,7 @@ def prepare_mega(self, mega_url, json_entry=None, params=None, headers_only=Fals
         except Exception as e:
             logger.error(f"Mega.nz download failed: {str(e)}")
             # Log for manual processing
-            mega_manual_file = "mega_links_failed.txt"
+            mega_manual_file = os.path.join(tempfile.gettempdir(), "mega_links_failed.txt")
             try:
                 with open(mega_manual_file, 'a', encoding='utf-8') as f:
                     f.write(f"{mega_url} - Error: {str(e)}\n")

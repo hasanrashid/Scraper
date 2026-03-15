@@ -30,6 +30,10 @@ class Downloader():
             self.mega_download_timeout_seconds: int = 900
             # Track filenames for duplicate detection
             self.filename_counts: Dict[str, int] = {}
+            for runtime_file in (self.scraped_links, self.download_errors):
+                runtime_dir = os.path.dirname(runtime_file)
+                if runtime_dir:
+                    os.makedirs(runtime_dir, exist_ok=True)
             self.prepare_function: Dict[str, Any] = {
                 'mega.nz': strategies.prepare_mega,
                 'drive.google.com': strategies.prepare_google, 
@@ -227,6 +231,7 @@ class Downloader():
                     file_path = file_path + extension
                 
                 # Write the collected content to file
+                os.makedirs(os.path.dirname(self.scraped_links) or '.', exist_ok=True)
                 with open(file_path, 'wb') as pdf_file, open(self.scraped_links, 'a+', encoding='utf-8') as scraped_links:
                     pdf_file.write(content)
                     size = len(content)
@@ -237,6 +242,7 @@ class Downloader():
             error_msg = f"Download error for {file_url}: {str(e)}"
             print(error_msg)
             logger.error(error_msg)
+            os.makedirs(os.path.dirname(self.download_errors) or '.', exist_ok=True)
             with open(self.download_errors, 'a', encoding='utf-8') as d:
                 d.write(f"\nError downloading: {file_url} - {str(e)}\n")
         

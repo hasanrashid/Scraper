@@ -16,7 +16,7 @@ warnings.warn(
     stacklevel=2
 )
 
-import configparser, logging, datetime, json
+import configparser, logging, datetime, json, tempfile
 import os
 from pathlib import Path
 
@@ -34,6 +34,20 @@ config_dir = os.path.dirname(os.path.abspath(__file__))
 config_ini_settings.read(os.path.join(config_dir, "config.ini"))
 with open(os.path.join(config_dir, "expression-mapping.json"), "r") as s:
     expression_mapping = json.load(s)
+
+
+def _runtime_base_dir() -> Path:
+    cwd = Path.cwd()
+    if os.access(cwd, os.W_OK):
+        return cwd
+    return Path(tempfile.gettempdir())
+
+
+def _resolve_runtime_path(path_value: str) -> str:
+    path = Path(path_value)
+    if path.is_absolute():
+        return str(path)
+    return str(_runtime_base_dir() / path)
 
 # Azure deployments can occasionally miss or fail to read config.ini.
 # Keep legacy module import-safe by applying minimal defaults.
@@ -56,6 +70,19 @@ if 'Filenames' not in config_ini_settings:
         'download-errors': 'download_errors.txt',
     }
 
+config_ini_settings['Logging']['logs-folder'] = _resolve_runtime_path(
+    config_ini_settings['Logging']['logs-folder']
+)
+config_ini_settings['Filenames']['download-folder'] = _resolve_runtime_path(
+    config_ini_settings['Filenames']['download-folder']
+)
+config_ini_settings['Filenames']['scraped-links'] = _resolve_runtime_path(
+    config_ini_settings['Filenames']['scraped-links']
+)
+config_ini_settings['Filenames']['download-errors'] = _resolve_runtime_path(
+    config_ini_settings['Filenames']['download-errors']
+)
+
 # Create logs directory if it doesn't exist
 logs_dir = config_ini_settings['Logging']['logs-folder']
 os.makedirs(logs_dir, exist_ok=True)
@@ -75,7 +102,7 @@ logger = logging.getLogger(config_ini_settings['Logging']['main-logger'])
 if not expression_mapping["Download URL"]:
     raise_exception("Could not map hostname to download url. Check expression-mapping.json")
 
-download_folder_path = os.path.join(os.getcwd(), config_ini_settings['Filenames']['download-folder'])
+download_folder_path = config_ini_settings['Filenames']['download-folder']
 if(not os.path.exists(download_folder_path)):
     os.makedirs(download_folder_path, exist_ok=True)
     logger.info(f"Created download folder: {download_folder_path}")

@@ -26,3 +26,4 @@ azure-functions>=1.21.0
 azure-core>=1.30.0
 azure-storage-blob>=12.19.0
 azure-identity>=1.15.0
+mega.py
