@@ -14,6 +14,7 @@ from Core.config_manager import ConfigManager
 from Core.http_client import HttpClient
 from Core.scraper import Scraper
 from Core.exceptions import ScrapingError
+from Core.field_truncator import FieldTruncator
 
 
 @dataclass
@@ -30,18 +31,27 @@ class BookMetadata:
     publication_year: str = ""
     
     def to_csv_row(self) -> List[str]:
-        """Convert to CSV row format"""
-        return [
-            self.title,
-            self.author,
-            self.website_name,
-            self.source_url,
+        """Convert to CSV row format with field truncation"""
+        # Truncate raw field values first using internal field names
+        truncated_title = FieldTruncator.truncate_field(self.title, 200, 'title')
+        truncated_author = FieldTruncator.truncate_field(self.author, 100, 'author')
+        truncated_website = FieldTruncator.truncate_field(self.website_name, 100, 'website_name')
+        truncated_url = FieldTruncator.truncate_field(self.source_url, 2048, 'source_url')
+        truncated_isbn = FieldTruncator.truncate_field(self.isbn, 50, 'isbn')
+        
+        row = [
+            truncated_title,
+            truncated_author,
+            truncated_website,
+            truncated_url,
             f"{self.file_size_mb:.2f}",
             self.crawl_date,
             f"{self.confidence_score:.2f}",
-            self.isbn,
+            truncated_isbn,
             self.publication_year
         ]
+        return row
+
 
 
 class PDFBookCrawler:

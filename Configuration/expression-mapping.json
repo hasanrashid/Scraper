@@ -1,5 +1,5 @@
 {
-    "Download Link RegEx1":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly",
+    "Download Link RegEx1":"mediafire\\.com|drive\\.google\\.com|datafilehost\\.com|goo\\.gl|bit\\.ly|archive\\.org|1drv\\.ms|onedrive\\.live\\.com|box\\.com|mega\\.nz|dropbox\\.com|substack\\.com|eboi\\.org|tinyurl\\.com|ow\\.ly|t\\.co|buff\\.ly",
     "Download Link RegEx":"\/\/(?:download[0-9]*\\.|ia[0-9]*\\.)?(.*?)\/",
     "File Extensions":["pdf","rar"],
     "Download URL":{
@@ -24,10 +24,25 @@
         "bit.ly":{
             "action":"download"
         },
+        "tinyurl.com":{
+            "action":"download"
+        },
+        "ow.ly":{
+            "action":"download"
+        },
+        "t.co":{
+            "action":"download"
+        },
+        "buff.ly":{
+            "action":"download"
+        },
         "mediafire.com":{
             "action":"download"
         },
         "www.mediafire.com":{
+            "action":"download"
+        },
+        "archive.org":{
             "action":"download"
         },
         "us.archive.org":{
@@ -35,6 +50,112 @@
         },
         "mega.nz":{
             "action":"download"
+        },
+        "box.com":{
+            "action":"download"
+        },
+        "www.box.com":{
+            "action":"download"
+        },
+        "app.box.com":{
+            "action":"download"
+        },
+        "1drv.ms":{
+            "action":"download"
+        },
+        "onedrive.live.com":{
+            "action":"download"
+        },
+        "dropbox.com":{
+            "action":"download"
+        },
+        "www.dropbox.com":{
+            "action":"download"
+        },
+        "substack.com":{
+            "action":"download"
+        },
+        "eboi.org":{
+            "action":"download"
+        },
+        "www.eboi.org":{
+            "action":"download"
+        },
+        "ebook.boierhut.com":{
+            "action":"download"
+        },
+        "boierhut.com":{
+            "action":"download"
+        },
+        "datafilehost.com":{
+            "action":"download"
+        }
+    },
+    "Page Structure Mapping": {
+        "www.amarbooks.org": {
+            "title": {
+                "css_selector": "title",
+                "regex_cleanup": " ❤️.*?❤️.*?✔️ Free Download|\\([0-9\\.]+MB\\)|^[\\s\\n\\r]+|[\\s\\n\\r]+$",
+                "text_split": " ❤️",
+                "take_first": true
+            },
+            "author": {
+                "css_selector": "h2:contains('🔴'), meta[name='description']",
+                "text_after": "🔴 ",
+                "text_before": " ❤️",
+                "regex_cleanup": "^[\\s\\n\\r]+|[\\s\\n\\r]+$",
+                "fallback_title_extraction": true
+            },
+            "download_link": {
+                "css_selector": "form[method='post'], .pdf-main, .main-pdf",
+                "attribute": "action",
+                "construct_download_url": "https://www.amarbooks.org/download.php?id={id}",
+                "extract_id_from_url": true
+            },
+            "file_size": {
+                "css_selector": "title, h3:contains('File Size')",
+                "regex_pattern": "\\(([0-9\\.]+MB)\\)",
+                "extract_group": 1
+            },
+            "description": {
+                "css_selector": "meta[name='description'], meta[name='googlebot']",
+                "attribute": "content",
+                "max_length": 300,
+                "regex_cleanup": "^[\\s\\n\\r]+|[\\s\\n\\r]+$"
+            }
+        },
+        "archive.org": {
+            "title": {
+                "css_selector": "h1[itemprop='name'], .item-title h1",
+                "fallback_css": ".breadcrumb a:last-child",
+                "regex_cleanup": "^[\\s\\n\\r]+|[\\s\\n\\r]+$"
+            },
+            "author": {
+                "css_selector": "a[itemprop='author'], .metadata-definition:contains('Creator') + .metadata-definition",
+                "text_after": "Creator:",
+                "regex_cleanup": "^[\\s\\n\\r]+|[\\s\\n\\r]+$"
+            },
+            "download_link": {
+                "css_selector": "a[href$='.pdf'], .download-pill a[href*='download']",
+                "attribute": "href",
+                "regex_pattern": ".*\\.pdf$"
+            }
+        },
+        "default": {
+            "title": {
+                "css_selector": "title, h1, h2, .title",
+                "regex_cleanup": "^[\\s\\n\\r]+|[\\s\\n\\r]+$",
+                "max_length": 200
+            },
+            "author": {
+                "css_selector": ".author, [class*='author'], [id*='author']",
+                "regex_cleanup": "^[\\s\\n\\r]+|[\\s\\n\\r]+$"
+            },
+            "download_link": {
+                "css_selector": "a[href*='download'], a[href$='.pdf']",
+                "attribute": "href",
+                "regex_pattern": ".*\\.(pdf|rar|zip)$"
+            }
         }
     }   
 }

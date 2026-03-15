@@ -293,7 +293,64 @@ class TestConfigManager(ConfigManager):
                         'action': 'download'
                     }
                 },
-                'File Extensions': ['pdf', 'rar']
+                'File Extensions': ['pdf', 'rar'],
+                'Page Structure Mapping': {
+                    'www.amarbooks.org': {
+                        'title_bengali': {
+                            'css_selector': 'title',
+                            'title_pattern': '^(.+?)\\s*[-–]\\s*([^|]+?)(?:\\s*\\|(.+))?$',
+                            'extract_group': 1,
+                            'regex_cleanup': '^[\\s\\n\\r]+|[\\s\\n\\r]+$'
+                        },
+                        'author_bengali': {
+                            'css_selector': 'title', 
+                            'title_pattern': '^(.+?)\\s*[-–]\\s*([^|]+?)(?:\\s*\\|(.+))?$',
+                            'extract_group': 2,
+                            'regex_cleanup': '^[\\s\\n\\r]+|[\\s\\n\\r]+$'
+                        },
+                        'title_english': {
+                            'css_selector': 'title',
+                            'title_pattern': '\\|\\s*(.+?)\\s*[-–]\\s*(.+?)\\s*$',
+                            'extract_group': 1,
+                            'regex_cleanup': '^[\\s\\n\\r]+|[\\s\\n\\r]+$'
+                        },
+                        'author_english': {
+                            'css_selector': 'title',
+                            'title_pattern': '\\|\\s*(.+?)\\s*[-–]\\s*(.+?)\\s*$',
+                            'extract_group': 2,
+                            'regex_cleanup': '^[\\s\\n\\r]+|[\\s\\n\\r]+$'
+                        },
+                        'title': {
+                            'derived_field': 'title_bengali'
+                        },
+                        'author': {
+                            'derived_field': 'author_bengali'
+                        },
+                        'download_link': {
+                            'construct_url': 'https://www.amarbooks.org/FreeDownload.php?w={author_english}&f={title_english}.pdf',
+                            'url_encode_params': True,
+                            'filename_format': '{title_bengali} - {author_bengali}.pdf'
+                        },
+                        'description': {
+                            'css_selector': 'meta[name=\"description\"]',
+                            'attribute': 'content',
+                            'max_length': 300,
+                            'regex_cleanup': '^[\\s\\n\\r]+|[\\s\\n\\r]+$'
+                        }
+                    },
+                    'default': {
+                        'title': {
+                            'css_selector': 'title, h1, h2, .title',
+                            'regex_cleanup': '^[\\s\\n\\r]+|[\\s\\n\\r]+$',
+                            'max_length': 200
+                        },
+                        'download_link': {
+                            'css_selector': 'a[href*=\"download\"], a[href$=\".pdf\"]',
+                            'attribute': 'href',
+                            'regex_pattern': '.*\\.(pdf|rar|zip)$'
+                        }
+                    }
+                }
             }
         }
         

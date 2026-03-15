@@ -1,0 +1,33 @@
+{
+    "multitenant_setup": {
+        "client_id": "8b848dfa-19a1-418c-b348-7294f34abc98",
+        "authorities": [
+            "https://login.microsoftonline.com/common",
+            "https://login.microsoftonline.com/organizations"
+        ],
+        "scopes": [
+            "https://graph.microsoft.com/Files.ReadWrite.All",
+            "https://graph.microsoft.com/Sites.ReadWrite.All",
+            "https://graph.microsoft.com/User.Read",
+            "https://graph.microsoft.com/.default"
+        ],
+        "redirect_uris": [
+            "http://localhost",
+            "http://localhost:8080",
+            "urn:ietf:wg:oauth:2.0:oob"
+        ]
+    },
+    "azure_portal_checklist": {
+        "authentication": "Set to 'Accounts in any organizational directory'",
+        "api_permissions": "Added Files.ReadWrite.All, Sites.ReadWrite.All",
+        "admin_consent": "Granted for all permissions",
+        "redirect_uris": "Added localhost and oob URIs",
+        "manifest_updated": "signInAudience set to AzureADMultipleOrgs"
+    },
+    "limitations": [
+        "External tenant licensing still applies",
+        "SPO license requirement may persist",
+        "Works best for multi-tenant organizations",
+        "Public file sharing may still be blocked"
+    ]
+}

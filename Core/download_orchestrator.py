@@ -24,6 +24,8 @@ class DownloadOrchestrator:
         self.http_client = http_client
         self.file_manager = file_manager
         self.logger = config_manager.get_logger()
+        # Track filenames for duplicate detection
+        self.filename_counts = {}
         
         # Initialize strategy registry if not provided
         if strategy_registry is None:
@@ -73,8 +75,25 @@ class DownloadOrchestrator:
             # Execute download strategy
             response = strategy.prepare_download(file_url)
             
-            # Extract filename from response headers or use provided title
-            filename = self._extract_filename(response, book_title, file_url)
+            # Extract actual filename from response headers
+            actual_filename = self._extract_filename(response, None, file_url)
+            
+            # Check if the CSV/JSON provided filename is a duplicate
+            is_duplicate = False
+            if book_title:
+                # Track filename counts
+                if book_title not in self.filename_counts:
+                    self.filename_counts[book_title] = 0
+                self.filename_counts[book_title] += 1
+                
+                # If this is a duplicate (count > 1), use the PDF's actual filename
+                if self.filename_counts[book_title] > 1 and actual_filename and actual_filename != book_title:
+                    self.logger.info(f"Duplicate filename detected: '{book_title}' - using PDF's actual filename: '{actual_filename}'")
+                    book_title = actual_filename
+                    is_duplicate = True
+            
+            # Use the filename (either from duplicate detection or provided)
+            filename = book_title if book_title else actual_filename
             
             # Check if file already exists
             if self.file_manager.file_exists(filename):

@@ -21,7 +21,9 @@ from bs4 import BeautifulSoup
 from Core.config_manager import ConfigManager
 from Core.http_client import HttpClient
 from Core.scraper import Scraper
+from Core.page_structure_extractor import PageStructureExtractor
 from Core.exceptions import ScrapingError
+from Core.field_truncator import FieldTruncator
 
 
 @dataclass
@@ -51,23 +53,33 @@ class PDFDocument:
         return urlparse(self.url).netloc
     
     def to_csv_row(self) -> List[str]:
-        """Convert to CSV row format"""
-        return [
-            self.url,
-            self.title,
-            self.author,
+        """Convert to CSV row format with field truncation"""
+        # Truncate fields using internal field names
+        truncated_url = FieldTruncator.truncate_field(self.url, 2048, 'url')
+        truncated_title = FieldTruncator.truncate_field(self.title, 200, 'title')
+        truncated_author = FieldTruncator.truncate_field(self.author, 100, 'author')
+        truncated_discovered = FieldTruncator.truncate_field(self.discovered_on_page, 2048, 'source_url')
+        truncated_link_text = FieldTruncator.truncate_field(self.link_text, 200, 'title')
+        truncated_link_context = FieldTruncator.truncate_field(self.link_context, 500, 'description')
+        
+        row = [
+            truncated_url,
+            truncated_title,
+            truncated_author,
             str(self.file_size_bytes),
             f"{self.file_size_mb:.2f}",
             self.content_type,
             self.last_modified,
-            self.discovered_on_page,
+            truncated_discovered,
             self.discovery_date,
             str(self.response_code),
             str(self.depth),
-            self.link_text,
-            self.link_context,
+            truncated_link_text,
+            truncated_link_context,
             self.domain
         ]
+        return row
+
 
 
 @dataclass
@@ -112,6 +124,9 @@ class PDFSiteCrawler:
         
         # Initialize regex manager
         self.regex_manager = config_manager.get_regex_manager()
+        
+        # Initialize page structure extractor
+        self.page_extractor = PageStructureExtractor(config_manager)
         
         # Load crawler configuration
         self.max_pages = config_manager.get_max_pages_per_site()
@@ -485,7 +500,7 @@ class PDFSiteCrawler:
         return ""
     
     def _extract_page_metadata(self, source_page_url: str) -> Optional[dict]:
-        """Extract metadata from the source page for better book information"""
+        """Extract metadata from the source page using flexible page structure extractor"""
         
         try:
             # Cache the page content if we already have it
@@ -500,6 +515,23 @@ class PDFSiteCrawler:
                     self._page_cache = {}
                 self._page_cache[source_page_url] = soup
             
+            # Use the flexible page structure extractor
+            metadata = self.page_extractor.extract_metadata(soup, source_page_url)
+            
+            if metadata:
+                self.logger.debug(f"Extracted metadata from {source_page_url}: {list(metadata.keys())}")
+                return metadata
+            
+            # Fallback to legacy extraction if no metadata found
+            return self._legacy_extract_page_metadata(soup, source_page_url)
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to extract page metadata from {source_page_url}: {e}")
+            return None
+    
+    def _legacy_extract_page_metadata(self, soup: BeautifulSoup, source_page_url: str) -> dict:
+        """Legacy metadata extraction as fallback"""
+        try:
             metadata = {}
             
             # Get page title and h1 for analysis
@@ -524,7 +556,7 @@ class PDFSiteCrawler:
                     if len(author_part) < 50 and 'bangla' not in author_part.lower():
                         metadata['title'] = title_part
                         metadata['author'] = author_part
-                    
+                        
             # Fallback: use h1 for title if not found
             if 'title' not in metadata and h1_title:
                 # Clean h1 title

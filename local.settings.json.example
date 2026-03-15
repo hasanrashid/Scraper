@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+
+    "SCRAPER_SCHEDULE": "0 0 0 * * *",
+
+    "AZURE_STORAGE_CONNECTION_STRING": "UseDevelopmentStorage=true",
+    "AZURE_STORAGE_CONTAINER_NAME": "scraped-links",
+
+    "SCRAPER_SITES": "[{\"url\": \"https://example.blogspot.com\", \"name\": \"example\", \"mode\": \"sitemap\"}]"
+  }
+}

@@ -1,7 +1,33 @@
 .vscode/
+/Deprecated
 /downloadscript
 /Local
 /Books
+/Amarboi
+/Banglabook
+/Amarbooks
+/AmarboiBooks
+/Banglabook_Downloads
+/Dhulokhela
+/legacy_scripts/
+
+# Root level files (except README and requirements)
+AMARBOOKS_README.md
+banglabook_crawler.log
+banglabook_downloads.log
+corrupted_mega_files.txt
+debug_amarbooks_page.html
+download_errors.txt
+mega_fix.py
+mega_links.txt
+
+# Microsoft Graph API Configuration (contains sensitive credentials)
+Configuration/microsoft_graph_config.ini
+microsoft_graph_token.json
+microsoft_graph_cache.bin
+scraped_links.txt
+test_new_download.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -154,3 +180,34 @@ pdf_documents.csv
 *.tmp
 *.temp
 .requirements.txt
+
+# Azure Functions local settings (may contain connection strings)
+local.settings.json
+
+# Sites config may contain private site URLs
+sites_config.json
+
+# Root data/output folders not required by runtime scripts
+/Amarboi-v2/
+/Banglabook-v2/
+/Dhulo-v2/
+/Dhulo-v2-pdf/
+/Soviet-v2/
+/soviet-v2/
+/amg-v2/
+/bcb-v2/
+/bpf-v2/
+/indrajaal-v2/
+
+# Local archive/migration content
+/Deprecated/
+
+# Runtime-generated logs/artifacts
+/logs/
+/Logs/
+/recovered_tmp.py
+/recovered_tmp.err
+
+# Local-only development/editor folders
+/Local/
+/Tests/

@@ -10,12 +10,24 @@ class Decorator(object):
 
     def __init__(self, host_response):
         self.host_response = host_response
+        self.response = None
 
     def __enter__(self):
-        return self
+        return self.response if self.response else self
+    
+    def __getattr__(self, name):
+        # Delegate attribute access to the response object
+        if self.response and hasattr(self.response, name):
+            return getattr(self.response, name)
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # Clean up resources if needed
+        if self.response and hasattr(self.response, 'close'):
+            try:
+                self.response.close()
+            except:
+                pass
         return False
 
     def __call__(self, downloader, file_url, headers_only=True):
@@ -30,12 +42,13 @@ class Decorator(object):
 
         if(json_entry["action"] != "download"):
             if(not all([json_entry['File ID regex'], json_entry['Cookie']])):
-                raise_exception(self,f"Error in expression-mapping.json. Check {expression_mapping['Download URL']}")
+                raise_exception(f"Error in expression-mapping.json. Check {expression_mapping['Download URL']}")
             keys = json_entry.keys()
             if('File ID regex' in keys):
                 params  = re.search(json_entry['File ID regex'], file_url).groupdict()
             if not params:
-                raise_exception(self,f"regex {json_entry['File ID regex']} did not return a match for {file_url}. Please check expression in expression-mappings.json")
+                raise_exception(f"regex {json_entry['File ID regex']} did not return a match for {file_url}. Please check expression in expression-mappings.json")
         
-        return self.host_response(downloader, file_url, json_entry,params,headers_only)
+        self.response = self.host_response(downloader, file_url, json_entry,params,headers_only)
+        return self
 

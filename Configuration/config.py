@@ -26,8 +26,13 @@ def raise_exception(message):
     raise e
 
 config_ini_settings = configparser.ConfigParser()
-config_ini_settings.read("./Configuration/config.ini")
-with open("./Configuration/expression-mapping.json", "r") as s:
+
+# Get the directory where this config.py file is located
+config_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Read config files relative to this directory
+config_ini_settings.read(os.path.join(config_dir, "config.ini"))
+with open(os.path.join(config_dir, "expression-mapping.json"), "r") as s:
     expression_mapping = json.load(s)
 
 # Create logs directory if it doesn't exist
