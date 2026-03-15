@@ -1,4 +1,6 @@
 .vscode/
+.funcignore
+
 /Deprecated
 /downloadscript
 /Local
@@ -211,3 +213,4 @@ sites_config.json
 # Local-only development/editor folders
 /Local/
 /Tests/
+.python_packages
