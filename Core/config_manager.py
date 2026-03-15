@@ -127,8 +127,13 @@ class ConfigManager(ABC):
 class IniConfigManager(ConfigManager):
     """Configuration manager that loads from INI and JSON files"""
     
-    def __init__(self, ini_path: str = "./Configuration/config.ini", 
-                 json_path: str = "./Configuration/expression-mapping.json"):
+    def __init__(self, ini_path: str = None,
+                 json_path: str = None):
+        _config_dir = Path(__file__).parent.parent / "Configuration"
+        if ini_path is None:
+            ini_path = str(_config_dir / "config.ini")
+        if json_path is None:
+            json_path = str(_config_dir / "expression-mapping.json")
         self._load_configuration(ini_path, json_path)
         self._setup_logging()
         self._setup_regex_manager()

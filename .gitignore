@@ -161,16 +161,16 @@ Client code/
 Download/
 Logs/
 
-# CSV output files
-*.csv
+# CSV output files (block generated output CSVs; per-folder exceptions below let scrape inputs through)
 CSV/
+pdf_documents.csv
+books.csv
 
 # Log files (additional patterns)
 *.log
 Logs/*.log
 
-# Configuration files with sensitive data
-Configuration/config.ini
+# sensitive data only (config.ini has no secrets, keep it for deployment)
 
 # Scraped data and output files
 links-*.txt
@@ -189,20 +189,38 @@ local.settings.json
 # Sites config may contain private site URLs
 sites_config.json
 
-# Root data/output folders not required by runtime scripts
+# Root data/output folders — ignore all except scrape input CSVs used by csv_downloader_job
 /Amarboi-v2/
-/Banglabook-v2/
-/Dhulo-v2/
 /Dhulo-v2-pdf/
-/Soviet-v2/
 /soviet-v2/
 /amg-v2/
 /bcb-v2/
 /bpf-v2/
 /indrajaal-v2/
 
-# Local archive/migration content
-/Deprecated/
+/Banglabook-v2/**
+!/Banglabook-v2/wordpress_scrape.csv
+!/Banglabook-v2/sitemap_scrape.csv
+
+/Dhulo-v2/**
+!/Dhulo-v2/wordpress_scrape.csv
+!/Dhulo-v2/sitemap_scrape.csv
+
+/Soviet-v2/**
+!/Soviet-v2/wordpress_scrape.csv
+!/Soviet-v2/sitemap_scrape.csv
+
+# Deprecated: only keep scrape input CSVs for Amarboi, Indrajaal, Kheladhulo
+/Deprecated/**
+!/Deprecated/Amarboi--v2/
+!/Deprecated/Amarboi--v2/wordpress_scrape.csv
+!/Deprecated/Amarboi--v2/sitemap_scrape.csv
+!/Deprecated/Indrajaal-v2/
+!/Deprecated/Indrajaal-v2/wordpress_scrape.csv
+!/Deprecated/Indrajaal-v2/sitemap_scrape.csv
+!/Deprecated/Kheladhulo-v2/
+!/Deprecated/Kheladhulo-v2/wordpress_scrape.csv
+!/Deprecated/Kheladhulo-v2/sitemap_scrape.csv
 
 # Runtime-generated logs/artifacts
 /logs/
