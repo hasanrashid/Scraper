@@ -1,5 +1,8 @@
 name: Deploy PDF Scraper to Azure Functions
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     branches:
@@ -45,5 +48,5 @@ jobs:
         with:
           app-name: scraper-v2
           package: "."
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true
+          remote-build: true
+          respect-funcignore: true
