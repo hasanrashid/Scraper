@@ -180,21 +180,27 @@ class IniConfigManager(ConfigManager):
     def _setup_logging(self):
         """Setup logging configuration"""
         logs_dir = self.ini_config['Logging']['logs-folder']
-        os.makedirs(logs_dir, exist_ok=True)
-        
-        log_filename = os.path.join(
-            logs_dir,
-            self.ini_config['Logging']['main-log'] + ' ' + 
-            datetime.datetime.now().strftime('%Y-%m-%d') + '.log'
-        )
-        
-        logging.basicConfig(
+        log_filename = None
+        try:
+            os.makedirs(logs_dir, exist_ok=True)
+            log_filename = os.path.join(
+                logs_dir,
+                self.ini_config['Logging']['main-log'] + ' ' +
+                datetime.datetime.now().strftime('%Y-%m-%d') + '.log'
+            )
+        except (PermissionError, OSError):
+            pass  # Fall back to console-only logging (e.g. Azure read-only wwwroot)
+
+        basicConfig_kwargs = dict(
             level=self.ini_config['Logging']['level'],
             format=self.ini_config['Logging']['formatter'],
             datefmt=self.ini_config['Logging']['date-format'],
-            filename=log_filename,
-            filemode='w'
         )
+        if log_filename:
+            basicConfig_kwargs['filename'] = log_filename
+            basicConfig_kwargs['filemode'] = 'w'
+
+        logging.basicConfig(**basicConfig_kwargs)
         
         self.logger = logging.getLogger(self.ini_config['Logging']['main-logger'])
     
@@ -206,7 +212,10 @@ class IniConfigManager(ConfigManager):
     def _ensure_directories(self):
         """Create necessary directories"""
         download_folder_path = os.path.join(os.getcwd(), self.get_download_folder())
-        os.makedirs(download_folder_path, exist_ok=True)
+        try:
+            os.makedirs(download_folder_path, exist_ok=True)
+        except (PermissionError, OSError):
+            pass  # Non-fatal: directory may not be needed in cloud environments
     
     def get_user_agent(self) -> str:
         return self.ini_config['Values']['user-agent']

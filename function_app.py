@@ -179,7 +179,7 @@ def csv_downloader_job(timer: func.TimerRequest) -> None:
         if not csv_path.is_absolute():
             csv_path = Path(__file__).parent / csv_path
         if not output_folder.is_absolute():
-            output_folder = Path(__file__).parent / output_folder
+            output_folder = Path(tempfile.gettempdir()) / out_path_raw
 
         logging.info(
             "CSV job %d: csv=%s out=%s limit=%s",
