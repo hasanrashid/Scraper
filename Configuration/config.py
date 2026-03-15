@@ -35,6 +35,27 @@ config_ini_settings.read(os.path.join(config_dir, "config.ini"))
 with open(os.path.join(config_dir, "expression-mapping.json"), "r") as s:
     expression_mapping = json.load(s)
 
+# Azure deployments can occasionally miss or fail to read config.ini.
+# Keep legacy module import-safe by applying minimal defaults.
+if 'Logging' not in config_ini_settings:
+    config_ini_settings['Logging'] = {
+        'logs-folder': 'Logs',
+        'main-log': 'scraper-log',
+        'test-log': 'unit-test-log',
+        'date-format': '%m-%d %H:%M',
+        'formatter': '%(asctime)s %(name)-12s %(levelname)-8s %(filename)s %(funcName)s %(lineno)d %(message)s',
+        'main-logger': 'ScraperLog',
+        'test-logger': 'TestLog',
+        'level': 'INFO',
+    }
+
+if 'Filenames' not in config_ini_settings:
+    config_ini_settings['Filenames'] = {
+        'scraped-links': 'scraped_links.txt',
+        'download-folder': 'Books/',
+        'download-errors': 'download_errors.txt',
+    }
+
 # Create logs directory if it doesn't exist
 logs_dir = config_ini_settings['Logging']['logs-folder']
 os.makedirs(logs_dir, exist_ok=True)
