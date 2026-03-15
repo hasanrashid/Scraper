@@ -39,12 +39,14 @@ import json
 import logging
 import os
 import tempfile
+from pathlib import Path
 from urllib.parse import urlparse
 
 import azure.functions as func
 
 from azure_blob_writer import BlobStorageWriter
 from consolidated_scraper import BloggerScraper
+from download_from_banglabook_csv import download_from_csv
 
 app = func.FunctionApp()
 
@@ -122,6 +124,89 @@ def pdf_link_scraper(timer: func.TimerRequest) -> None:
     )
 
 
+@app.timer_trigger(
+    schedule="%SCRAPER_SCHEDULE%",
+    arg_name="timer",
+    run_on_startup=False,
+    use_monitor=False,
+)
+def csv_downloader_job(timer: func.TimerRequest) -> None:
+    """Optional timer job that runs CSV downloader logic without shell execution.
+
+    Enable with app setting `CSV_DOWNLOADER_ENABLED=true`.
+    Jobs are read from JSON app setting `CSV_DOWNLOAD_JOBS`, for example:
+      [
+        {
+          "csv_file": "Banglabook-v2/wordpress_scrape.csv",
+          "output_folder": "Books/Banglabooks-v2",
+          "limit": 50
+        }
+      ]
+
+    This uses the same Python function that powers the CLI script.
+    """
+    if not _is_truthy(os.getenv("CSV_DOWNLOADER_ENABLED", "false")):
+        logging.info("CSV downloader job disabled (CSV_DOWNLOADER_ENABLED != true)")
+        return
+
+    if timer.past_due:
+        logging.warning("CSV downloader timer is past due - running anyway")
+
+    jobs = _load_csv_download_jobs()
+    if not jobs:
+        logging.warning("CSV downloader enabled but CSV_DOWNLOAD_JOBS is empty")
+        return
+
+    ok_count = 0
+    err_count = 0
+
+    for idx, job in enumerate(jobs, start=1):
+        csv_path_raw = (job.get("csv_file") or "").strip()
+        out_path_raw = (job.get("output_folder") or "").strip()
+        limit = job.get("limit")
+        verbose = bool(job.get("verbose", False))
+
+        if not csv_path_raw or not out_path_raw:
+            logging.error(
+                "CSV job %d missing csv_file/output_folder: %s", idx, job
+            )
+            err_count += 1
+            continue
+
+        csv_path = Path(csv_path_raw)
+        output_folder = Path(out_path_raw)
+
+        if not csv_path.is_absolute():
+            csv_path = Path(__file__).parent / csv_path
+        if not output_folder.is_absolute():
+            output_folder = Path(__file__).parent / output_folder
+
+        logging.info(
+            "CSV job %d: csv=%s out=%s limit=%s",
+            idx,
+            csv_path,
+            output_folder,
+            limit,
+        )
+
+        try:
+            code = download_from_csv(
+                csv_file=csv_path,
+                output_folder=output_folder,
+                limit=limit,
+                verbose=verbose,
+            )
+            if code == 0:
+                ok_count += 1
+            else:
+                err_count += 1
+        except Exception:
+            logging.exception("CSV job %d failed", idx)
+            err_count += 1
+
+    logging.info("CSV downloader run complete. success=%d errors=%d", ok_count, err_count)
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -143,6 +228,30 @@ def _load_sites() -> list[dict]:
         return data if isinstance(data, list) else data.get("sites", [])
 
     return []
+
+
+def _load_csv_download_jobs() -> list[dict]:
+    """Load CSV downloader jobs from CSV_DOWNLOAD_JOBS JSON app setting."""
+    raw = os.getenv("CSV_DOWNLOAD_JOBS", "").strip()
+    if not raw:
+        return []
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        logging.error("CSV_DOWNLOAD_JOBS is not valid JSON")
+        return []
+
+    if not isinstance(data, list):
+        logging.error("CSV_DOWNLOAD_JOBS must be a JSON array")
+        return []
+
+    # Keep only object entries.
+    return [x for x in data if isinstance(x, dict)]
+
+
+def _is_truthy(value: str) -> bool:
+    return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
 def _name_from_url(url: str) -> str:
