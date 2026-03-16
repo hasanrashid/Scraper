@@ -27,6 +27,26 @@ A modern Python web scraping application designed to extract and download PDF do
 
 ## 🚀 Quick Start
 
+## Azure Function App
+
+The Azure deployment is scraper-only.
+
+- It runs the `pdf_link_scraper` timer trigger on the `SCRAPER_SCHEDULE` cron schedule.
+- It scrapes the configured book sites from `SCRAPER_SITES`.
+- It writes weekly scrape results to Azure Blob Storage in the configured container, currently `scraped-links`.
+- It uploads date-stamped CSV snapshots plus crawl progress JSON so later runs can resume incrementally.
+
+Current blob layout:
+
+```text
+{site_name}/{YYYY-MM-DD}/wordpress_scrape.csv
+{site_name}/{YYYY-MM-DD}/sitemap_scrape.csv
+{site_name}/wordpress_crawl_progress.json
+{site_name}/sitemap_crawl_progress.json
+```
+
+The CSV downloader remains available as a local script, but it is not deployed as an Azure Function trigger.
+
 ### Installation
 
 ```bash
